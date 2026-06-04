@@ -208,11 +208,6 @@
         return;
       }
 
-      const badges = [
-        selectedCar.NEWCAR ? '<span class="badge new">NEW</span>' : '',
-        selectedCar.TYPE === 'Limited' ? '<span class="badge limited">Limited</span>' : ''
-      ].join('');
-
       let perfHTML = '';
       Object.values(UPGRADES).forEach(group => {
         let opts = '';
@@ -250,7 +245,6 @@
       area.innerHTML = `
         <div class="calc-card">
           <h2>${selectedCar.CarName}</h2>
-          ${badges ? `<div class="badges">${badges}</div>` : ''}
           <p class="base-price-tag">Base price: <strong>${fmt(selectedCar.PRICE)}</strong></p>
 
           <hr class="divider">
