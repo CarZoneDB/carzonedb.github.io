@@ -26,7 +26,7 @@ const path = window.location.pathname;
 
 const isSubPage =
   path.includes('/cars/') ||
-  path.includes('/races/');
+  path.includes('/races/') ||
   path.includes('/calculator/');
 
 const componentPath = isSubPage
