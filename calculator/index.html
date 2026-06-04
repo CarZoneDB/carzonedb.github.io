@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>CarZoneDB - Calculator</title>
+  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/CarZoneDB/CarZoneDB.github.io/refs/heads/main/assets/favicon.png">
+  <meta
+    name="description"
+    content="A fan-created database for the Roblox experience Car Zone, providing searchable and filterable information about cars, races, and other game content."
+  />
+
+  <link rel="stylesheet" href="../components/base.css">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+  <div id="navbar"></div>
+
+  <main class="sect" aria-label="Upgrade cost calculator">
+
+    <div class="filter-bar">
+      <input type="text" placeholder="Search cars..." class="filter-input" id="carSearch" oninput="filterCars()">
+      <select class="filter-select" id="carSelect" onchange="onCarSelect()">
+        <option value="">Select a car...</option>
+      </select>
+    </div>
+
+    <div id="calcArea">
+      <p class="empty-state">Select a car above to calculate upgrade costs.</p>
+    </div>
+
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="../components/elementloader.js"></script>
+  <script>
+    // ===== Data =====
+    const UPGRADES = {
+      Engine: {
+        key: 'engine', label: 'Engine',
+        options: [
+          { name: 'Stock', pct: 0 },
+          { name: 'Street', pct: 0.10 },
+          { name: 'Sport', pct: 0.15 },
+          { name: 'Race', pct: 0.20 }
+        ]
+      },
+      Gearbox: {
+        key: 'gearbox', label: 'Gearbox',
+        options: [
+          { name: 'Stock', pct: 0 },
+          { name: 'Street', pct: 0.05 },
+          { name: 'Sport', pct: 0.07 },
+          { name: 'Race', pct: 0.10 }
+        ]
+      },
+      Turbo: {
+        key: 'turbo', label: 'Turbo',
+        options: [
+          { name: 'Stock', pct: 0 },
+          { name: 'Turbo', pct: 0.05 },
+          { name: 'Twin Turbo', pct: 0.10 }
+        ]
+      },
+      Brakes: {
+        key: 'brakes', label: 'Brakes',
+        options: [
+          { name: 'Stock', pct: 0 },
+          { name: 'Street', pct: 0.05 },
+          { name: 'Sport', pct: 0.07 },
+          { name: 'Race', pct: 0.10 }
+        ]
+      },
+      Drive: {
+        key: 'drive', label: 'Drive',
+        options: [
+          { name: 'Stock (no change)', flat: 0 },
+          { name: 'FWD', flat: 10000 },
+          { name: 'RWD', flat: 15000 },
+          { name: 'AWD', flat: 25000 }
+        ]
+      },
+      Tires: {
+        key: 'tires', label: 'Tires',
+        options: [
+          { name: 'Stock (no change)', flat: 0 },
+          { name: 'Street', flat: 5000 },
+          { name: 'Drift', flat: 10000 },
+          { name: 'Race', flat: 15000 }
+        ]
+      }
+    };
+
+    const SUSPENSION = {
+      'Suspension Height': {
+        key: 'sheight', label: 'Suspension Height',
+        options: [
+          { name: 'None', flat: 0 },
+          { name: 'Low', flat: 10000 },
+          { name: 'Stock', flat: 10000 },
+          { name: 'High', flat: 10000 }
+        ]
+      },
+      'Suspension Camber': {
+        key: 'camber', label: 'Camber',
+        options: [
+          { name: 'None', flat: 0 },
+          { name: 'Tilt 2°', flat: 10000 },
+          { name: 'Tilt 4°', flat: 10000 },
+          { name: 'Tilt 6°', flat: 10000 },
+          { name: 'Tilt 8°', flat: 10000 },
+          { name: 'Tilt 10°', flat: 10000 }
+        ]
+      },
+      'Front Offset': {
+        key: 'foffset', label: 'Front Offset',
+        options: [
+          { name: 'None', flat: 0 },
+          { name: 'Offset [-0.1]', flat: 10000 },
+          { name: 'Offset [-0.05]', flat: 10000 },
+          { name: 'Offset [0.05]', flat: 10000 },
+          { name: 'Offset [0.1]', flat: 10000 },
+          { name: 'Offset [0.15]', flat: 10000 },
+          { name: 'Offset [0.2]', flat: 10000 },
+          { name: 'Offset [0.25]', flat: 10000 },
+          { name: 'Offset [0.3]', flat: 10000 },
+          { name: 'Offset [0.35]', flat: 10000 },
+          { name: 'Offset [0.4]', flat: 10000 }
+        ]
+      },
+      'Rear Offset': {
+        key: 'roffset', label: 'Rear Offset',
+        options: [
+          { name: 'None', flat: 0 },
+          { name: 'Offset [-0.1]', flat: 10000 },
+          { name: 'Offset [-0.05]', flat: 10000 },
+          { name: 'Offset [0.05]', flat: 10000 },
+          { name: 'Offset [0.1]', flat: 10000 },
+          { name: 'Offset [0.15]', flat: 10000 },
+          { name: 'Offset [0.2]', flat: 10000 },
+          { name: 'Offset [0.25]', flat: 10000 },
+          { name: 'Offset [0.3]', flat: 10000 },
+          { name: 'Offset [0.35]', flat: 10000 },
+          { name: 'Offset [0.4]', flat: 10000 }
+        ]
+      }
+    };
+
+    // ===== State =====
+    let allCars = [];
+    let selectedCar = null;
+    let breakdownVisible = false;
+
+    // ===== Helpers =====
+    function fmt(n) {
+      return '$' + Math.round(n).toLocaleString();
+    }
+
+    function normalizeCar(car) {
+      if (!car || typeof car !== 'object' || Array.isArray(car)) return null;
+      return {
+        CarName: car.CarName || 'Unknown Car',
+        TYPE: car.TYPE || 'Unknown',
+        NEWCAR: car.NEWCAR || false,
+        PRICE: car.PRICE || 0
+      };
+    }
+
+    // ===== Filter =====
+    function filterCars() {
+      const q = document.getElementById('carSearch').value.toLowerCase();
+      const sel = document.getElementById('carSelect');
+      const prev = sel.value;
+
+      sel.innerHTML = '<option value="">Select a car...</option>';
+
+      allCars
+        .filter(c => c.CarName.toLowerCase().includes(q))
+        .forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.CarName;
+          opt.textContent = c.CarName;
+          if (c.CarName === prev) opt.selected = true;
+          sel.appendChild(opt);
+        });
+    }
+
+    // ===== On Car Select =====
+    function onCarSelect() {
+      const name = document.getElementById('carSelect').value;
+      selectedCar = allCars.find(c => c.CarName === name) || null;
+      breakdownVisible = false;
+      renderCalc();
+    }
+
+    // ===== Render Calculator =====
+    function renderCalc() {
+      const area = document.getElementById('calcArea');
+
+      if (!selectedCar) {
+        area.innerHTML = '<p class="empty-state">Select a car above to calculate upgrade costs.</p>';
+        return;
+      }
+
+      const badges = [
+        selectedCar.NEWCAR ? '<span class="badge new">NEW</span>' : '',
+        selectedCar.TYPE === 'Limited' ? '<span class="badge limited">Limited</span>' : ''
+      ].join('');
+
+      let perfHTML = '';
+      Object.values(UPGRADES).forEach(group => {
+        let opts = '';
+        group.options.forEach((opt, i) => {
+          let costStr = '';
+          if (opt.flat !== undefined) {
+            costStr = opt.flat > 0 ? ' (+' + fmt(opt.flat) + ')' : '';
+          } else {
+            const cost = Math.round(selectedCar.PRICE * (opt.pct || 0));
+            costStr = cost > 0 ? ' (+' + fmt(cost) + ')' : '';
+          }
+          opts += `<option value="${i}">${opt.name}${costStr}</option>`;
+        });
+        perfHTML += `
+          <div class="upgrade-group">
+            <label>${group.label}</label>
+            <select data-key="${group.key}" onchange="recalc()">${opts}</select>
+          </div>`;
+      });
+
+      let suspHTML = '';
+      Object.values(SUSPENSION).forEach(group => {
+        let opts = '';
+        group.options.forEach((opt, i) => {
+          const costStr = opt.flat > 0 ? ' (+' + fmt(opt.flat) + ')' : '';
+          opts += `<option value="${i}">${opt.name}${costStr}</option>`;
+        });
+        suspHTML += `
+          <div class="upgrade-group">
+            <label>${group.label}</label>
+            <select data-key="${group.key}" onchange="recalc()">${opts}</select>
+          </div>`;
+      });
+
+      area.innerHTML = `
+        <div class="calc-card">
+          <h2>${selectedCar.CarName}</h2>
+          ${badges ? `<div class="badges">${badges}</div>` : ''}
+          <p class="base-price-tag">Base price: <strong>${fmt(selectedCar.PRICE)}</strong></p>
+
+          <hr class="divider">
+
+          <div class="upgrades-section">
+            <h3>Performance Upgrades</h3>
+            <div class="upgrades-grid">${perfHTML}</div>
+          </div>
+
+          <div class="upgrades-section">
+            <h3>Suspension Upgrades</h3>
+            <div class="upgrades-grid">${suspHTML}</div>
+          </div>
+
+          <div class="summary-bar" id="summaryBar">
+            <div class="summary-item">
+              <span>Base Price</span>
+              <span id="sumBase">${fmt(selectedCar.PRICE)}</span>
+            </div>
+            <div class="summary-sep"></div>
+            <div class="summary-item">
+              <span>Upgrades</span>
+              <span id="sumUpgrades">$0</span>
+            </div>
+            <div class="summary-sep"></div>
+            <div class="summary-item total">
+              <span>Total</span>
+              <span id="sumTotal">${fmt(selectedCar.PRICE)}</span>
+            </div>
+            <button class="breakdown-btn" id="breakdownBtn" onclick="toggleBreakdown()">Breakdown</button>
+          </div>
+
+          <div class="breakdown-card" id="breakdownCard" style="display:none;">
+            <h3>Cost Breakdown</h3>
+            <table class="breakdown-table" id="breakdownTable"></table>
+          </div>
+        </div>`;
+
+      recalc();
+    }
+
+    // ===== Recalc =====
+    function recalc() {
+      if (!selectedCar) return;
+
+      const price = selectedCar.PRICE;
+      let upgradeTotal = 0;
+      const lines = [];
+
+      const allGroups = { ...UPGRADES, ...SUSPENSION };
+
+      document.querySelectorAll('[data-key]').forEach(sel => {
+        const key = sel.dataset.key;
+        const group = Object.values(allGroups).find(g => g.key === key);
+        if (!group) return;
+
+        const idx = parseInt(sel.value);
+        const opt = group.options[idx];
+        if (!opt) return;
+
+        let cost = 0;
+        if (opt.flat !== undefined) {
+          cost = opt.flat;
+        } else {
+          cost = Math.round(price * (opt.pct || 0));
+        }
+
+        if (cost > 0) {
+          lines.push({ label: group.label + ' — ' + opt.name, cost });
+          upgradeTotal += cost;
+        }
+      });
+
+      document.getElementById('sumBase').textContent = fmt(price);
+      document.getElementById('sumUpgrades').textContent = fmt(upgradeTotal);
+      document.getElementById('sumTotal').textContent = fmt(price + upgradeTotal);
+
+      const table = document.getElementById('breakdownTable');
+      if (table) {
+        table.innerHTML = '';
+        lines.forEach(l => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${l.label}</td><td>${fmt(l.cost)}</td>`;
+          table.appendChild(tr);
+        });
+        const totRow = document.createElement('tr');
+        totRow.className = 'total-row';
+        totRow.innerHTML = `<td>Total (car + upgrades)</td><td>${fmt(price + upgradeTotal)}</td>`;
+        table.appendChild(totRow);
+      }
+    }
+
+    // ===== Toggle Breakdown =====
+    function toggleBreakdown() {
+      breakdownVisible = !breakdownVisible;
+      const card = document.getElementById('breakdownCard');
+      const btn = document.getElementById('breakdownBtn');
+      if (card) card.style.display = breakdownVisible ? 'block' : 'none';
+      if (btn) btn.classList.toggle('active', breakdownVisible);
+    }
+
+    // ===== Fetch Data =====
+    fetch('https://carzonedb.github.io/assets/infojsons/cars.json')
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        return res.json();
+      })
+      .then(api => {
+        const rawCars = api.data || {};
+
+        allCars = Object.values(rawCars)
+          .map(normalizeCar)
+          .filter(Boolean)
+          .sort((a, b) => a.CarName.localeCompare(b.CarName));
+
+        const sel = document.getElementById('carSelect');
+        allCars.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.CarName;
+          opt.textContent = c.CarName;
+          sel.appendChild(opt);
+        });
+      })
+      .catch(err => {
+        console.error('Failed to load cars:', err);
+        document.getElementById('calcArea').innerHTML =
+          '<p class="empty-state" style="color: #FF3B3B;">Failed to load car data.</p>';
+      });
+  </script>
+</body>
+</html>
