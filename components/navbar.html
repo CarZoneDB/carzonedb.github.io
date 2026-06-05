@@ -1,5 +1,4 @@
 <style>
-
 html, body {
     margin: 0;
     padding: 0;
@@ -14,6 +13,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    padding-top: 64px;
 }
 
 /* ===== NAVBAR ===== */
@@ -22,7 +22,6 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-
     z-index: 300;
 
     background: var(--foreground-color);
@@ -43,30 +42,22 @@ body {
     box-sizing: border-box;
 }
 
-.navbar li {
-    flex: 0 0 auto;
-}
-
+/* KEY FIX: pushes everything after logo to the right */
 .navbar .logo {
     display: flex;
     align-items: center;
-    justify-content: center;
 
-    padding: 0;
-    margin-right: 8px;
-
-    background: transparent;
-    border-radius: 0;
-
-    user-select: none;
+    margin-right: auto;
 }
 
+/* logo image */
 .navbar .logo img {
     height: 42px;
     width: auto;
     display: block;
 }
 
+/* nav links */
 .navbar a {
     display: block;
 
@@ -87,10 +78,6 @@ body {
 
 .navbar a.active {
     font-weight: bold;
-}
-
-body {
-    padding-top: 64px;
 }
 
 /* ===== MOBILE ===== */
