@@ -1,5 +1,5 @@
 <style>
-    html, body {
+html, body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -16,7 +16,7 @@ body {
     padding-top: 64px;
 }
 
-/* ===== NAVBAR ===== */
+/* ================= NAVBAR ================= */
 .navbar {
     position: fixed;
     top: 0;
@@ -26,36 +26,43 @@ body {
 
     background: var(--foreground-color);
     border-bottom: 1px solid var(--border-color);
-}
 
-/* Header always visible */
-.nav-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 10px 16px;
-    min-height: 64px;
+    padding: 0 16px;
+    height: 64px;
+    box-sizing: border-box;
 }
 
-/* Logo always visible */
+/* ================= LOGO ================= */
 .logo {
     height: 42px;
     width: auto;
     display: block;
 }
 
-/* Toggle only on mobile */
+/* ================= HEADER (mobile container) ================= */
+.nav-header {
+    display: flex;
+    align-items: center;
+}
+
+/* ================= HAMBURGER ================= */
 .nav-toggle {
     display: none;
     font-size: 28px;
+
     background: none;
     border: none;
     color: var(--text-color);
+
     cursor: pointer;
+    margin-left: 10px;
 }
 
-/* Nav links container */
+/* ================= LINKS ================= */
 .navbar .nav-links {
     list-style: none;
 
@@ -64,20 +71,14 @@ body {
     gap: 24px;
 
     margin: 0;
-    padding: 0 24px;
-
-    min-height: 64px;
-    box-sizing: border-box;
+    padding: 0;
 }
 
-/* Items */
 .navbar li {
     display: flex;
     align-items: center;
-    flex: 0 0 auto;
 }
 
-/* Links */
 .navbar a {
     display: block;
 
@@ -100,7 +101,7 @@ body {
     font-weight: bold;
 }
 
-/* ===== DESKTOP ===== */
+/* ================= DESKTOP ================= */
 @media (min-width: 601px) {
     .nav-toggle {
         display: none;
@@ -108,46 +109,41 @@ body {
 
     .navbar .nav-links {
         display: flex !important;
-        flex-direction: row;
-        gap: 24px;
-        padding: 0 24px;
-        align-items: center;
     }
 }
 
-/* ===== MOBILE ===== */
+/* ================= MOBILE ================= */
 @media (max-width: 600px) {
 
     .nav-toggle {
         display: block;
     }
 
+    /* hide menu by default */
     .navbar .nav-links {
         display: none;
-        flex-direction: column;
-        align-items: stretch;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        width: 100%;
 
+        flex-direction: column;
         gap: 10px;
 
-        padding: 10px;
+        background: var(--foreground-color);
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-color);
     }
 
+    /* open state */
     .navbar.open .nav-links {
         display: flex;
     }
 
-    .navbar li {
-        width: 100%;
-    }
-
     .navbar a {
         width: 100%;
-        box-sizing: border-box;
         text-align: center;
-    }
-
-    body {
-        padding-top: 64px;
+        box-sizing: border-box;
     }
 }
 </style>
@@ -155,6 +151,7 @@ body {
 <nav class="navbar">
     <div class="nav-header">
         <img class="logo" src="https://carzonedb.github.io/assets/favicon.png" alt="Logo">
+
         <button class="nav-toggle">☰</button>
     </div>
 
@@ -168,10 +165,10 @@ body {
 </nav>
 
 <script>
-    const navbar = document.querySelector(".navbar");
-    const toggle = document.querySelector(".nav-toggle");
+const navbar = document.querySelector(".navbar");
+const toggle = document.querySelector(".nav-toggle");
 
-    toggle.addEventListener("click", () => {
-        navbar.classList.toggle("open");
-    });
+toggle.addEventListener("click", () => {
+    navbar.classList.toggle("open");
+});
 </script>
