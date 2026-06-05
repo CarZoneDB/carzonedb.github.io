@@ -1,6 +1,5 @@
 <style>
-
-html, body {
+    html, body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -29,6 +28,36 @@ body {
     border-bottom: 1px solid var(--border-color);
 }
 
+/* Header row (logo + toggle) */
+.nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 10px 16px;
+    min-height: 64px;
+}
+
+/* Logo */
+.navbar .logo {
+    height: 42px;
+    width: auto;
+    display: block;
+}
+
+/* Toggle button */
+.nav-toggle {
+    display: none;
+    font-size: 28px;
+
+    background: none;
+    border: none;
+    color: var(--text-color);
+
+    cursor: pointer;
+}
+
+/* Nav links container */
 .navbar .nav-links {
     list-style: none;
 
@@ -43,28 +72,14 @@ body {
     box-sizing: border-box;
 }
 
+/* Items */
 .navbar li {
     display: flex;
     align-items: center;
     flex: 0 0 auto;
 }
 
-/* ===== LOGO ===== */
-.navbar .logo {
-    display: flex;
-    align-items: center;
-
-    padding: 0;
-    margin: 0;
-}
-
-.navbar .logo img {
-    height: 42px;
-    width: auto;
-    display: block;
-}
-
-/* ===== LINKS ===== */
+/* Links */
 .navbar a {
     display: block;
 
@@ -87,17 +102,15 @@ body {
     font-weight: bold;
 }
 
-.nav-toggle {
-    display: none;
-    position: absolute;
-    right: 16px;
-    top: 14px;
+/* ===== DESKTOP ===== */
+@media (min-width: 601px) {
+    .nav-header {
+        display: none;
+    }
 
-    font-size: 28px;
-    background: none;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
+    .navbar .nav-links {
+        display: flex !important;
+    }
 }
 
 /* ===== MOBILE ===== */
@@ -125,7 +138,6 @@ body {
         width: 100%;
     }
 
-    .navbar .logo,
     .navbar a {
         width: 100%;
         box-sizing: border-box;
@@ -136,16 +148,15 @@ body {
         padding-top: 64px;
     }
 }
-
 </style>
 
 <nav class="navbar">
-    <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+    <div class="nav-header">
+        <img class="logo" src="https://carzonedb.github.io/assets/favicon.png" alt="CarZoneDB Logo">
+        <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+    </div>
 
     <ul class="nav-links">
-        <li class="logo">
-            <img src="https://carzonedb.github.io/assets/favicon.png" alt="CarZoneDB Logo">
-        </li>
         <li><a href="https://carzonedb.github.io/">Home</a></li>
         <li><a href="https://carzonedb.github.io/cars/">Cars</a></li>
         <li><a href="https://carzonedb.github.io/races/">Races</a></li>
