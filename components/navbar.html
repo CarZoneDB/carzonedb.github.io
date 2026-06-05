@@ -48,17 +48,23 @@ body {
 }
 
 .navbar .logo {
-    font-weight: 600;
-    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    padding: 8px 18px;
+    padding: 6px 14px;
     border-radius: 12px;
 
     background: var(--accent-color);
-    color: var(--text-color);
 
     user-select: none;
     white-space: nowrap;
+}
+
+.navbar .logo img {
+    height: 36px;
+    width: auto;
+    display: block;
 }
 
 .navbar a {
@@ -118,7 +124,9 @@ body {
 
 <nav class="navbar">
     <ul>
-        <li class="logo">CarZoneDB</li>
+        <li class="logo">
+            <img src="https://carzonedb.github.io/assets/favicon.png" alt="CarZoneDB Logo">
+        </li>
         <li><a href="https://carzonedb.github.io/">Home</a></li>
         <li><a href="https://carzonedb.github.io/cars/">Cars</a></li>
         <li><a href="https://carzonedb.github.io/races/">Races</a></li>
