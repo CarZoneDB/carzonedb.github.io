@@ -67,3 +67,9 @@ main p {
   font-weight: bold;
   margin-top: 4px;
 }
+.bot-line {
+  font-size: 0.95rem;
+  opacity: 0.75;
+  margin-top: -18px;
+  margin-bottom: 32px;
+}
