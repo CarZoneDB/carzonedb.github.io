@@ -30,17 +30,15 @@ body {
 
     display: flex;
     align-items: center;
-    justify-content: flex-start;
 
     padding: 0 16px;
     box-sizing: border-box;
 }
 
-/* ================= LOGO + HEADER ================= */
+/* ================= LOGO ================= */
 .nav-header {
     display: flex;
     align-items: center;
-    width: 100%;
 }
 
 .logo {
@@ -51,6 +49,8 @@ body {
 
 /* ================= HAMBURGER ================= */
 .nav-toggle {
+    margin-left: auto; /* 🔥 pushes it to the far right */
+
     display: none;
     font-size: 28px;
 
@@ -59,11 +59,10 @@ body {
     color: var(--text-color);
 
     cursor: pointer;
-    margin-left: auto;
 }
 
 /* ================= LINKS ================= */
-.navbar .nav-links {
+.nav-links {
     list-style: none;
 
     display: flex;
@@ -108,8 +107,9 @@ body {
         display: block;
     }
 
-    .navbar .nav-links {
+    .nav-links {
         display: none;
+
         position: absolute;
         top: 64px;
         left: 0;
@@ -140,8 +140,9 @@ body {
 <nav class="navbar">
     <div class="nav-header">
         <img class="logo" src="https://carzonedb.github.io/assets/favicon.png" alt="Logo">
-        <button class="nav-toggle">☰</button>
     </div>
+
+    <button class="nav-toggle">☰</button>
 
     <ul class="nav-links">
         <li><a href="https://carzonedb.github.io/">Home</a></li>
