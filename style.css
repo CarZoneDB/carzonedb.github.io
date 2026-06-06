@@ -72,3 +72,17 @@ main p {
   margin-top: -18px;
   margin-bottom: 32px;
 }
+
+.discord-widget {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+.discord-widget iframe {
+  width: 100%;
+  max-width: 350px;
+  height: 350px;
+  border: 0;
+}
