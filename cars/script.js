@@ -1,27 +1,44 @@
+// ===== Dropdown =====
+function toggleDropdown(button) {
+  const menu = button.nextElementSibling;
 
-// ======================
-// STATE
-// ======================
+  document.querySelectorAll(".dropdown-menu").forEach(d => {
+    if (d !== menu) d.classList.remove("active", "flip-left");
+  });
+
+  menu.classList.toggle("active");
+
+  if (menu.classList.contains("active")) {
+    menu.classList.remove("flip-left");
+
+    const rect = menu.getBoundingClientRect();
+
+    if (rect.right > window.innerWidth) {
+      menu.classList.add("flip-left");
+    }
+  }
+}
+
+// ===== DATA =====
 const carList = document.getElementById("carList");
-
 let carsData = [];
-const carMap = new Map(); // name -> { el, data, rap }
 
-// ======================
-// PACK LINKS
-// ======================
+// ===== PACK LINKS =====
 const packLinks = {
-  vip: "https://www.roblox.com/game-pass/984631403/VIP",
-  "starter pack": "https://www.roblox.com/game-pass/984407482/Starter-Pack",
-  "hyper pack": "https://www.roblox.com/game-pass/1260965456/Hyper-Pack",
-  "track pack": "https://www.roblox.com/game-pass/1105690213/Track-Pack"
+  'vip': 'https://www.roblox.com/game-pass/984631403/VIP',
+  'starter pack': 'https://www.roblox.com/game-pass/984407482/Starter-Pack',
+  'hyper pack': 'https://www.roblox.com/game-pass/1260965456/Hyper-Pack',
+  'track pack': 'https://www.roblox.com/game-pass/1105690213/Track-Pack'
 };
 
-// ======================
-// NORMALIZE
-// ======================
+// ===== NORMALIZE DATA =====
 function normalizeCar(car) {
-  if (!car || typeof car !== "object" || Array.isArray(car)) return null;
+
+  // skip invalid entries like:
+  // "2020 Loput Ereto": [3]
+  if (!car || typeof car !== "object" || Array.isArray(car)) {
+    return null;
+  }
 
   return {
     CarName: car.CarName || "Unknown Car",
@@ -41,207 +58,238 @@ function normalizeCar(car) {
   };
 }
 
-// ======================
-// BUILD CARDS ONCE
-// ======================
-function buildCars(data) {
-  carList.innerHTML = "";
+// ===== RENDER =====
+function renderCars(data) {
 
-  data.forEach(car => {
-    const safeId = car.CarName.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+  carList.innerHTML = data.length
+    ? data.map(car => {
 
-    const el = document.createElement("article");
-    el.className = "car";
-    el.id = `car-${safeId}`;
+        const packKey = car.PACKNAME?.toLowerCase().trim();
+        const packLink = packLinks[packKey] || null;
 
-    el.dataset.name = car.CarName.toLowerCase();
+        // sanitize id
+        const safeId = car.CarName
+          .replace(/[^a-z0-9]+/gi, "-")
+          .toLowerCase();
 
-    el.dataset.price = car.PRICE;
-    el.dataset.rap = car.RAP;
+        return `
+<article class="car" id="car-${safeId}" tabindex="0">
 
-    el.innerHTML = `
-      <h2>${car.CarName}</h2>
+  <h2>${car.CarName}</h2>
 
-      <div class="badges">
-        ${car.NEWCAR ? '<span class="badge new">NEW</span>' : ''}
-        ${car.TYPE === 'Limited' ? '<span class="badge limited">Limited</span>' : ''}
-        ${car.BodyKits ? '<span class="badge">BodyKit</span>' : ''}
-        ${car.GAMEPASSID ? '<span class="badge gamepass">Gamepass</span>' : ''}
-        ${car.PACKNAME ? `<span class="badge pack">${car.PACKNAME}</span>` : ''}
-      </div>
+  <div class="badges">
+    ${car.NEWCAR ? '<span class="badge new">NEW</span>' : ''}
+    ${car.TYPE === 'Limited' ? '<span class="badge limited">Limited</span>' : ''}
+    ${car.BodyKits ? '<span class="badge">BodyKit</span>' : ''}
+    ${car.GAMEPASSID ? '<span class="badge gamepass">Gamepass</span>' : ''}
 
-      <div class="car-details">
-        <div><strong>Type:</strong> ${car.TYPE}</div>
-        <div><strong>In Shop:</strong> ${car.SHOP ? "Yes" : "No"}</div>
-        <div><strong>Price:</strong> $${Number(car.PRICE).toLocaleString()}</div>
-
-        <div>
-          <strong>RAP:</strong>
-          <span class="rap-value">$${Number(car.RAP).toLocaleString()}</span>
-        </div>
-
-        <div><strong>V-Max:</strong> ${car.VMAX} MPH</div>
-        <div><strong>Horse Power:</strong> ${car.POWER} HP</div>
-        <div><strong>Acceleration:</strong> 0-60 in ${car.ACC} sec</div>
-        <div><strong>EXP for Driving:</strong> ${car.EXP}</div>
-      </div>
-    `;
-
-    carList.appendChild(el);
-
-    carMap.set(car.CarName, {
-      el,
-      rap: car.RAP,
-      price: car.PRICE
-    });
-  });
-}
-
-// ======================
-// LIVE RAP PATCHING (NO RERENDER)
-// ======================
-function patchCars(newData) {
-  newData.forEach(car => {
-    const entry = carMap.get(car.CarName);
-    if (!entry) return;
-
-    const rapEl = entry.el.querySelector(".rap-value");
-
-    const oldRap = entry.rap;
-    const newRap = car.RAP;
-
-    if (oldRap !== newRap) {
-      rapEl.textContent = `$${Number(newRap).toLocaleString()}`;
-
-      rapEl.classList.remove("rap-up", "rap-down");
-
-      if (newRap > oldRap) {
-        rapEl.classList.add("rap-up");
-      } else {
-        rapEl.classList.add("rap-down");
-      }
-
-      setTimeout(() => {
-        rapEl.classList.remove("rap-up", "rap-down");
-      }, 800);
-
-      entry.rap = newRap;
+    ${packLink
+      ? `<a href="${packLink}" target="_blank" class="badge pack" title="Click to view this pack on Roblox">${car.PACKNAME} 🔗</a>`
+      : (car.PACKNAME
+          ? `<span class="badge pack">${car.PACKNAME}</span>`
+          : '')
     }
-  });
+  </div>
+
+  <div class="car-details">
+    <div><strong>Type:</strong> ${car.TYPE || 'N/A'}</div>
+    <div><strong>In Shop:</strong> ${car.SHOP ? 'Yes' : 'No'}</div>
+    <div><strong>Price:</strong> $${Number(car.PRICE).toLocaleString()}</div>
+    <div><strong>RAP:</strong> $${Number(car.RAP).toLocaleString()}</div>
+    <div><strong>V-Max:</strong> ${car.VMAX || 'N/A'} MPH</div>
+    <div><strong>Horse Power:</strong> ${car.POWER || 'N/A'} HP</div>
+    <div><strong>Acceleration:</strong> 0-60 in ${car.ACC || 'N/A'} sec</div>
+    <div><strong>EXP for Driving:</strong> ${car.EXP || 'N/A'}</div>
+  </div>
+
+</article>
+        `;
+      }).join('')
+    : '<p>No cars match your criteria.</p>';
 }
 
-// ======================
-// FILTERS (DOM ONLY, NO RERENDER)
-// ======================
+// ===== FILTER =====
 function applyFilters() {
-  const search = document.querySelector(".filter-input").value.toLowerCase();
 
-  const priceMode = document.querySelector("input[name='price']:checked").value;
-  const rapMode = document.querySelector("input[name='rap']:checked").value;
+  const search = document
+    .querySelector(".filter-input")
+    .value
+    .toLowerCase();
 
-  const minPrice = Number(document.getElementById("minPrice").value) || 0;
-  const maxPrice = Number(document.getElementById("maxPrice").value) || Infinity;
+  const types = [
+    ...document.querySelectorAll(
+      ".filter-dropdown:nth-of-type(1) input:checked"
+    )
+  ].map(i => i.value);
 
-  const minRap = Number(document.getElementById("minRap").value) || 0;
-  const maxRap = Number(document.getElementById("maxRap").value) || Infinity;
+  const shop = [
+    ...document.querySelectorAll(
+      ".filter-dropdown:nth-of-type(2) input:checked"
+    )
+  ].map(i => i.value);
 
   const chips = document.querySelectorAll(".filter-chip");
-  const body = chips[0]?.classList.contains("active");
-  const newC = chips[1]?.classList.contains("active");
-  const gamepass = chips[2]?.classList.contains("active");
 
-  carMap.forEach((data, name) => {
-    const el = data.el;
+  const body = chips[0].classList.contains("active");
+  const newC = chips[1].classList.contains("active");
+  const gamepass = chips[2].classList.contains("active");
 
-    let show = true;
+  const priceMode = document.querySelector(
+    "input[name='price']:checked"
+  ).value;
 
-    if (!name.toLowerCase().includes(search)) show = false;
+  const minPrice = Number(
+    document.getElementById("minPrice").value
+  ) || 0;
 
-    const price = data.price;
-    const rap = data.rap;
+  const maxPrice = Number(
+    document.getElementById("maxPrice").value
+  ) || Infinity;
 
-    if (price < minPrice || price > maxPrice) show = false;
-    if (rap < minRap || rap > maxRap) show = false;
+  const rapMode = document.querySelector(
+    "input[name='rap']:checked"
+  ).value;
 
-    if (body && !el.querySelector(".badge:not(.new)")) show = false;
-    if (newC && !el.querySelector(".badge.new")) show = false;
-    if (gamepass && !el.querySelector(".badge.gamepass")) show = false;
+  const minRap = Number(
+    document.getElementById("minRap").value
+  ) || 0;
 
-    el.style.display = show ? "" : "none";
+  const maxRap = Number(
+    document.getElementById("maxRap").value
+  ) || Infinity;
+
+  let filtered = carsData.filter(car => {
+
+    if (!car.CarName.toLowerCase().includes(search)) {
+      return false;
+    }
+
+    if (types.length) {
+      const type = car.TYPE.toLowerCase().replace(" car", "");
+
+      if (!types.includes(type)) {
+        return false;
+      }
+    }
+
+    if (shop.length) {
+      const val = car.SHOP
+        ? "available"
+        : "unavailable";
+
+      if (!shop.includes(val)) {
+        return false;
+      }
+    }
+
+    if (body && !car.BodyKits) {
+      return false;
+    }
+
+    if (newC && !car.NEWCAR) {
+      return false;
+    }
+
+    if (gamepass && !car.GAMEPASSID) {
+      return false;
+    }
+
+    if (priceMode === "range") {
+      if (car.PRICE < minPrice || car.PRICE > maxPrice) {
+        return false;
+      }
+    }
+
+    if (rapMode === "range") {
+      if (car.RAP < minRap || car.RAP > maxRap) {
+        return false;
+      }
+    }
+
+    return true;
   });
+
+  // ===== SORT =====
+  // Price sort takes priority; RAP sort applies if price is "any"
+  if (priceMode === "low-high") {
+    filtered.sort((a, b) => a.PRICE - b.PRICE);
+
+  } else if (priceMode === "high-low") {
+    filtered.sort((a, b) => b.PRICE - a.PRICE);
+
+  } else if (rapMode === "low-high") {
+    filtered.sort((a, b) => a.RAP - b.RAP);
+
+  } else if (rapMode === "high-low") {
+    filtered.sort((a, b) => b.RAP - a.RAP);
+  }
+
+  renderCars(filtered);
 }
 
-// ======================
-// SORTING (DOM REORDER, NO RERENDER)
-// ======================
-function sortCars(mode) {
-  const cards = [...carMap.values()].map(v => v.el);
+// ===== EVENTS =====
+document.querySelector(".filter-input")
+  .addEventListener("input", applyFilters);
 
-  let sorted = cards.sort((a, b) => {
-    if (mode === "price-low") return a.dataset.price - b.dataset.price;
-    if (mode === "price-high") return b.dataset.price - a.dataset.price;
-    if (mode === "rap-low") return a.dataset.rap - b.dataset.rap;
-    if (mode === "rap-high") return b.dataset.rap - a.dataset.rap;
-    return 0;
+document.querySelectorAll(".filter-dropdown input")
+  .forEach(el => {
+    el.addEventListener("change", applyFilters);
   });
 
-  const frag = document.createDocumentFragment();
-  sorted.forEach(el => frag.appendChild(el));
-  carList.appendChild(frag);
-}
+document.querySelectorAll(".filter-chip")
+  .forEach(chip => {
 
-// ======================
-// EVENTS
-// ======================
-document.querySelector(".filter-input").addEventListener("input", applyFilters);
+    chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+      applyFilters();
+    });
 
-document.querySelectorAll(".filter-dropdown input").forEach(el => {
-  el.addEventListener("change", applyFilters);
-});
-
-document.querySelectorAll(".filter-chip").forEach(chip => {
-  chip.addEventListener("click", () => {
-    chip.classList.toggle("active");
-    applyFilters();
   });
+
+document.querySelectorAll(
+  "input[name='price'], #minPrice, #maxPrice"
+).forEach(el => {
+  el.addEventListener("input", applyFilters);
 });
 
-document.querySelectorAll("input[name='price'], #minPrice, #maxPrice")
-  .forEach(el => el.addEventListener("input", applyFilters));
+document.querySelectorAll(
+  "input[name='rap'], #minRap, #maxRap"
+).forEach(el => {
+  el.addEventListener("input", applyFilters);
+});
 
-document.querySelectorAll("input[name='rap'], #minRap, #maxRap")
-  .forEach(el => el.addEventListener("input", applyFilters));
+// ===== FETCH DATA =====
+fetch("https://carzonedb.github.io/assets/infojsons/cars.json")
 
-// SORT TRIGGER (you must connect this to your UI)
-window.sortCars = sortCars;
+  .then(res => {
 
-// ======================
-// AUTO UPDATE SYSTEM
-// ======================
-async function loadCars() {
-  try {
-    const res = await fetch("https://carzonedb.github.io/assets/infojsons/cars.json");
-    const api = await res.json();
+    if (!res.ok) {
+      throw new Error(`HTTP Error: ${res.status}`);
+    }
+
+    return res.json();
+  })
+
+  .then(api => {
 
     const rawCars = api.data || {};
 
-    const newCars = Object.values(rawCars)
+    carsData = Object.values(rawCars)
       .map(normalizeCar)
       .filter(Boolean);
 
-    if (carMap.size === 0) {
-      carsData = newCars;
-      buildCars(newCars);
-      return;
-    }
+    console.log("Cars Loaded:", carsData.length);
 
-    patchCars(newCars);
+    renderCars(carsData);
+  })
 
-  } catch (err) {
+  .catch(err => {
+
     console.error("Failed to load cars:", err);
-  }
-}
 
-// init
-loadCars();
-setInterval(loadCars, 60000);
+    carList.innerHTML = `
+      <p style="color:red;">
+        Failed to load cars data.
+      </p>
+    `;
+  });
