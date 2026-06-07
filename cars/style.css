@@ -318,7 +318,6 @@
 /* ===== RAP Value ===== */
 .rap-value {
   display: inline-block;
-  font-weight: 600;
   transition: color 1s ease;
 }
 
