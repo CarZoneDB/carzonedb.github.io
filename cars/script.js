@@ -52,6 +52,7 @@ function normalizeCar(car) {
     POWER: car.POWER || 0,
     EXP: car.EXP || 0,
     PRICE: car.PRICE || 0,
+    RAP: car.RAP || 0,
     PACKNAME: car.PACKNAME || null,
     GAMEPASSID: car.GAMEPASSID || null
   };
@@ -92,6 +93,7 @@ function renderCars(data) {
 
   <div class="car-details">
     <div><strong>Price:</strong> $${Number(car.PRICE).toLocaleString()}</div>
+    <div><strong>RAP:</strong> $${Number(car.RAP).toLocaleString()}</div>
     <div><strong>Horse Power:</strong> ${car.POWER || 'N/A'} HP</div>
     <div><strong>V-Max:</strong> ${car.VMAX || 'N/A'} MPH</div>
     <div><strong>Acceleration:</strong> 0-60 in ${car.ACC || 'N/A'} sec</div>
