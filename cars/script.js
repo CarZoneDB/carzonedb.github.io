@@ -136,14 +136,23 @@ function patchRap(newData) {
     // ── Update value text ──
     rapEl.textContent = `$${Number(newRap).toLocaleString()}`;
 
-    // ── Delta pill: shows "+1,234" or "-1,234" then fades ──
+    // ── Delta pill: slides in, holds, then fades out ──
     if (deltaEl) {
-      deltaEl.textContent = `${sign}${Number(diff).toLocaleString()}`;
-      deltaEl.className = "rap-delta " + (isUp ? "delta-up" : "delta-down");
-
-      // Clear previous fade timer if still running
+      // Reset cleanly
       if (deltaEl._fadeTimer) clearTimeout(deltaEl._fadeTimer);
+      deltaEl.className = "rap-delta " + (isUp ? "delta-up" : "delta-down");
+      deltaEl.textContent = `${sign}${Number(diff).toLocaleString()}`;
+
+      // Slide in on next frame so transition fires
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          deltaEl.classList.add("delta-visible");
+        });
+      });
+
+      // Hold for 2s then fade out
       deltaEl._fadeTimer = setTimeout(() => {
+        deltaEl.classList.remove("delta-visible");
         deltaEl.classList.add("delta-fade");
         deltaEl._fadeTimer = setTimeout(() => {
           deltaEl.textContent = "";
