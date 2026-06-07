@@ -316,4 +316,4 @@ async function loadCars() {
 
 // Initial load + poll every 5 seconds
 loadCars();
-setInterval(loadCars, 60000);
+setInterval(loadCars, 15000);
