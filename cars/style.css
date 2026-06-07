@@ -90,7 +90,6 @@
   display: block;
 }
 
-/* Flip to right-align if overflowing viewport */
 .dropdown-menu.flip-left {
   left: auto;
   right: 0;
@@ -213,7 +212,6 @@
   opacity: 0.85;
 }
 
-/* ===== Car List Container thingy iDK MAN  */
 /* ===== Car Grid ===== */
 #carList {
   display: grid;
@@ -229,8 +227,9 @@
   border-radius: 12px;
   text-align: left;
   border: 1px solid var(--border-color);
-  transition: transform 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.5s ease, border-color 0.5s ease;
 }
+
 .car:hover {
   transform: scale(1.05);
 }
@@ -260,15 +259,17 @@
   border-radius: 8px;
 }
 
-.badge.limited { background-color: #FF4DB8; }
-.badge.new { background-color: #FF3B3B; }
+.badge.limited  { background-color: #FF4DB8; }
+.badge.new      { background-color: #FF3B3B; }
 .badge.gamepass { background-color: #1E90FF; }
+
 .badge.pack {
   background-color: #FF9F1C;
   text-decoration: none;
   cursor: pointer;
   transition: transform 0.1s, box-shadow 0.1s;
 }
+
 .badge.pack:hover {
   transform: scale(1.1);
   box-shadow: 0 0 6px #FF9F1C;
@@ -302,48 +303,96 @@
   }
 }
 
-/* ── RAP value colour flash ── */
-.rap-up {
-  color: #00e676;
-  animation: slideUp 0.4s ease;
-}
-.rap-down {
-  color: #ff1744;
-  animation: slideDown 0.4s ease;
-}
+/* ===================================================
+   RAP LIVE UPDATE ANIMATIONS
+   =================================================== */
 
-@keyframes slideUp {
-  0%   { transform: translateY(6px); opacity: 0.4; }
-  100% { transform: translateY(0);   opacity: 1;   }
-}
-@keyframes slideDown {
-  0%   { transform: translateY(-6px); opacity: 0.4; }
-  100% { transform: translateY(0);    opacity: 1;   }
-}
-
-/* ── Delta pill "+1,234" / "-1,234" ── */
+/* ===== RAP Row Layout ===== */
 .rap-row {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 6px;
 }
-.rap-delta {
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 4px;
-  transition: opacity 0.6s ease;
-}
-.delta-up   { background: rgba(0, 230, 118, 0.15); color: #00e676; }
-.delta-down { background: rgba(255, 23,  68, 0.15); color: #ff1744; }
-.delta-fade { opacity: 0; }
 
-/* ── Card border glow ── */
-.card-glow-up {
-  box-shadow: 0 0 12px 2px rgba(0, 230, 118, 0.4);
-  transition: box-shadow 0.3s ease;
+/* ===== RAP Value ===== */
+.rap-value {
+  display: inline-block;
+  font-weight: 600;
+  transition: color 1s ease;
 }
+
+.rap-up {
+  color: #5ddb8f;
+  animation: rapSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.rap-down {
+  color: #e05c6e;
+  animation: rapSlideDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes rapSlideUp {
+  0%   { transform: translateY(6px)  scale(0.95); opacity: 0; }
+  65%  { transform: translateY(-2px) scale(1.04); opacity: 1; }
+  100% { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+@keyframes rapSlideDown {
+  0%   { transform: translateY(-6px) scale(0.95); opacity: 0; }
+  65%  { transform: translateY(2px)  scale(1.04); opacity: 1; }
+  100% { transform: translateY(0)    scale(1);    opacity: 1; }
+}
+
+/* ===== Delta Pill ===== */
+.rap-delta {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 6px;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+.rap-delta.delta-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.rap-delta.delta-fade {
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.delta-up {
+  background: rgba(93, 219, 143, 0.1);
+  color: #5ddb8f;
+  border: 1px solid rgba(93, 219, 143, 0.25);
+}
+
+.delta-down {
+  background: rgba(224, 92, 110, 0.1);
+  color: #e05c6e;
+  border: 1px solid rgba(224, 92, 110, 0.25);
+}
+
+/* ===== Card Glow ===== */
+.card-glow-up {
+  border-color: rgba(93, 219, 143, 0.5) !important;
+  box-shadow:
+    0 0 0 1px rgba(93, 219, 143, 0.15),
+    0 0 20px 3px rgba(93, 219, 143, 0.08);
+}
+
 .card-glow-down {
-  box-shadow: 0 0 12px 2px rgba(255, 23, 68, 0.4);
-  transition: box-shadow 0.3s ease;
+  border-color: rgba(224, 92, 110, 0.5) !important;
+  box-shadow:
+    0 0 0 1px rgba(224, 92, 110, 0.15),
+    0 0 20px 3px rgba(224, 92, 110, 0.08);
 }
