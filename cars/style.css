@@ -302,27 +302,48 @@
   }
 }
 
-/* ===== Responsive RAP value ===== */
+/* ── RAP value colour flash ── */
 .rap-up {
-  color: #00ff7f;
-  font-weight: bold;
-  animation: popUp 0.5s ease;
+  color: #00e676;
+  animation: slideUp 0.4s ease;
 }
-
 .rap-down {
-  color: #ff4d4d;
-  font-weight: bold;
-  animation: popDown 0.5s ease;
+  color: #ff1744;
+  animation: slideDown 0.4s ease;
 }
 
-@keyframes popUp {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.15); }
-  100% { transform: scale(1); }
+@keyframes slideUp {
+  0%   { transform: translateY(6px); opacity: 0.4; }
+  100% { transform: translateY(0);   opacity: 1;   }
+}
+@keyframes slideDown {
+  0%   { transform: translateY(-6px); opacity: 0.4; }
+  100% { transform: translateY(0);    opacity: 1;   }
 }
 
-@keyframes popDown {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.9); }
-  100% { transform: scale(1); }
+/* ── Delta pill "+1,234" / "-1,234" ── */
+.rap-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rap-delta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  transition: opacity 0.6s ease;
+}
+.delta-up   { background: rgba(0, 230, 118, 0.15); color: #00e676; }
+.delta-down { background: rgba(255, 23,  68, 0.15); color: #ff1744; }
+.delta-fade { opacity: 0; }
+
+/* ── Card border glow ── */
+.card-glow-up {
+  box-shadow: 0 0 12px 2px rgba(0, 230, 118, 0.4);
+  transition: box-shadow 0.3s ease;
+}
+.card-glow-down {
+  box-shadow: 0 0 12px 2px rgba(255, 23, 68, 0.4);
+  transition: box-shadow 0.3s ease;
 }
