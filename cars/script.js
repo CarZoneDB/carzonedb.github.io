@@ -138,12 +138,24 @@ function applyFilters() {
     "input[name='price']:checked"
   ).value;
 
-  const min = Number(
+  const minPrice = Number(
     document.getElementById("minPrice").value
   ) || 0;
 
-  const max = Number(
+  const maxPrice = Number(
     document.getElementById("maxPrice").value
+  ) || Infinity;
+
+  const rapMode = document.querySelector(
+    "input[name='rap']:checked"
+  ).value;
+
+  const minRap = Number(
+    document.getElementById("minRap").value
+  ) || 0;
+
+  const maxRap = Number(
+    document.getElementById("maxRap").value
   ) || Infinity;
 
   let filtered = carsData.filter(car => {
@@ -183,8 +195,13 @@ function applyFilters() {
     }
 
     if (priceMode === "range") {
+      if (car.PRICE < minPrice || car.PRICE > maxPrice) {
+        return false;
+      }
+    }
 
-      if (car.PRICE < min || car.PRICE > max) {
+    if (rapMode === "range") {
+      if (car.RAP < minRap || car.RAP > maxRap) {
         return false;
       }
     }
@@ -193,11 +210,18 @@ function applyFilters() {
   });
 
   // ===== SORT =====
+  // Price sort takes priority; RAP sort applies if price is "any"
   if (priceMode === "low-high") {
     filtered.sort((a, b) => a.PRICE - b.PRICE);
 
   } else if (priceMode === "high-low") {
     filtered.sort((a, b) => b.PRICE - a.PRICE);
+
+  } else if (rapMode === "low-high") {
+    filtered.sort((a, b) => a.RAP - b.RAP);
+
+  } else if (rapMode === "high-low") {
+    filtered.sort((a, b) => b.RAP - a.RAP);
   }
 
   renderCars(filtered);
@@ -228,6 +252,12 @@ document.querySelectorAll(
   el.addEventListener("input", applyFilters);
 });
 
+document.querySelectorAll(
+  "input[name='rap'], #minRap, #maxRap"
+).forEach(el => {
+  el.addEventListener("input", applyFilters);
+});
+
 // ===== FETCH DATA =====
 fetch("https://carzonedb.github.io/assets/infojsons/cars.json")
 
@@ -241,12 +271,6 @@ fetch("https://carzonedb.github.io/assets/infojsons/cars.json")
   })
 
   .then(api => {
-
-    // NEW FORMAT:
-    // {
-    //   meta: {...},
-    //   data: {...cars}
-    // }
 
     const rawCars = api.data || {};
 
