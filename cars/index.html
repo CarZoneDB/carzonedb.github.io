@@ -85,6 +85,33 @@
       </div>
     </div>
 
+<!-- RAP -->
+    <div class="filter-dropdown">
+      <button class="filter-btn" onclick="toggleDropdown(this)">RAP ▾</button>
+      <div class="dropdown-menu">
+        <div class="dropdown-header">RAP</div>
+        <label class="radio">
+          <input type="radio" name="rap" value="any" checked>
+          Any RAP
+        </label>
+        <label class="radio">
+          <input type="radio" name="rap" value="low-high">
+          Low → High
+        </label>
+        <label class="radio">
+          <input type="radio" name="rap" value="high-low">
+          High → Low
+        </label>
+        <label class="radio">
+          <input type="radio" name="rap" value="range">
+          <div class="range-inputs">
+            <input type="number" id="minRap" placeholder="Min">
+            <input type="number" id="maxRap" placeholder="Max">
+          </div>
+        </label>
+      </div>
+    </div>
+    
   </div>
 
 <div id="carList">
