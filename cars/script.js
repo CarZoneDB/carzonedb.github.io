@@ -92,14 +92,14 @@ function renderCars(data) {
   </div>
 
   <div class="car-details">
-    <div><strong>Price:</strong> $${Number(car.PRICE).toLocaleString()}</div>
-    <div><strong>RAP:</strong> $${Number(car.RAP).toLocaleString()}</div>
-    <div><strong>Horse Power:</strong> ${car.POWER || 'N/A'} HP</div>
-    <div><strong>V-Max:</strong> ${car.VMAX || 'N/A'} MPH</div>
-    <div><strong>Acceleration:</strong> 0-60 in ${car.ACC || 'N/A'} sec</div>
-    <div><strong>EXP for Driving:</strong> ${car.EXP || 'N/A'}</div>
     <div><strong>Type:</strong> ${car.TYPE || 'N/A'}</div>
     <div><strong>In Shop:</strong> ${car.SHOP ? 'Yes' : 'No'}</div>
+    <div><strong>Price:</strong> $${Number(car.PRICE).toLocaleString()}</div>
+    <div><strong>RAP:</strong> $${Number(car.RAP).toLocaleString()}</div>
+    <div><strong>V-Max:</strong> ${car.VMAX || 'N/A'} MPH</div>
+    <div><strong>Horse Power:</strong> ${car.POWER || 'N/A'} HP</div>
+    <div><strong>Acceleration:</strong> 0-60 in ${car.ACC || 'N/A'} sec</div>
+    <div><strong>EXP for Driving:</strong> ${car.EXP || 'N/A'}</div>
   </div>
 
 </article>
