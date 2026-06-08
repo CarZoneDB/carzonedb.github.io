@@ -288,7 +288,7 @@ document.querySelectorAll("input[name='rap'], #minRap, #maxRap")
 // ===== LOAD CARS =====
 async function loadCars() {
   try {
-    const res = await fetch("https://carzonedb.github.io/assets/infojsons/cars.json");
+    const res = await fetch(`https://carzonedb.github.io/assets/infojsons/cars.json?${Date.now()}`);
 
     if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
 
