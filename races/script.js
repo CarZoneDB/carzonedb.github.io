@@ -100,7 +100,7 @@ function renderRaces(api) {
 }
 
 // ===== FETCH RACES =====
-fetch("https://carzonedb.github.io/assets/infojsons/races.json")
+fetch(`https://carzonedb.github.io/assets/infojsons/races.json?${Date.now()}`)
   .then(res => res.json())
   .then(renderRaces)
   .catch(() => {
