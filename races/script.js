@@ -63,7 +63,7 @@ function renderRaces(api) {
     ${difficulty === 'EASY' ? '<span class="badge easy">Easy</span>' : ''}
     ${difficulty === 'MEDIUM' ? '<span class="badge medium">Medium</span>' : ''}
     ${difficulty === 'HARD' ? '<span class="badge hard">Hard</span>' : ''}
-    ${difficulty === 'EXTREME' ? '<span class="badge extreme">Extreme</span>' : ''}
+    ${difficulty === 'EXTREME' ? '<span class="badge extreme">EXTREME</span>' : ''}
   </div>
 
   <div class="details">
