@@ -38,7 +38,8 @@ function renderRaces(api) {
   const difficultyOrder = {
     EASY: 1,
     MEDIUM: 2,
-    HARD: 3
+    HARD: 3,
+    EXTREME: 4
   };
 
   const sorted = Object.entries(races).sort(([, a], [, b]) => {
@@ -62,6 +63,7 @@ function renderRaces(api) {
     ${difficulty === 'EASY' ? '<span class="badge easy">Easy</span>' : ''}
     ${difficulty === 'MEDIUM' ? '<span class="badge medium">Medium</span>' : ''}
     ${difficulty === 'HARD' ? '<span class="badge hard">Hard</span>' : ''}
+    ${difficulty === 'EXTREME' ? '<span class="badge extreme">Extreme</span>' : ''}
   </div>
 
   <div class="details">
