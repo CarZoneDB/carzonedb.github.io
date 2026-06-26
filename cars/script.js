@@ -94,7 +94,9 @@ function renderCars(data) {
     <div><strong>Price:</strong> $${Number(car.PRICE).toLocaleString()}</div>
     <div class="rap-row">
       <strong>RAP:</strong>
-      <span class="rap-value" id="rap-${safeId}">$${Number(car.RAP).toLocaleString()}</span>
+      <span class="rap-value" id="rap-${safeId}">
+        ${car.RAP === 0 ? "N/A" : `$${Number(car.RAP).toLocaleString()}`}
+      </span>
       <span class="rap-delta" id="rap-delta-${safeId}"></span>
     </div>
     <div><strong>V-Max:</strong> ${car.VMAX || 'N/A'} MPH</div>
@@ -134,7 +136,10 @@ function patchRap(newData) {
     const sign = isUp ? "+" : "";
 
     // ── Update value text ──
-    rapEl.textContent = `$${Number(newRap).toLocaleString()}`;
+    rapEl.textContent =
+  newRap === 0
+    ? "N/A"
+    : `$${Number(newRap).toLocaleString()}`;
 
     // ── Delta pill: slides in, holds, then fades out ──
     if (deltaEl) {
