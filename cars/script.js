@@ -77,7 +77,7 @@ function renderCars(data) {
   <div class="badges">
     ${car.NEWCAR ? '<span class="badge new">NEW</span>' : ''}
     ${car.TYPE === 'Limited' ? '<span class="badge limited">Limited</span>' : ''}
-    ${car.BodyKits ? '<span class="badge">BodyKit</span>' : ''}
+    ${car.BodyKits ? '<span class="badge">Body Kits</span>' : ''}
     ${car.GAMEPASSID ? '<span class="badge gamepass">Gamepass</span>' : ''}
 
     ${packLink
