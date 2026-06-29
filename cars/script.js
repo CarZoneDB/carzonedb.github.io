@@ -1,6 +1,4 @@
-// =====================
-// DROPDOWN
-// =====================
+// ===== Dropdown =====
 function toggleDropdown(button) {
   const menu = button.nextElementSibling;
 
@@ -14,39 +12,37 @@ function toggleDropdown(button) {
     menu.classList.remove("flip-left");
 
     const rect = menu.getBoundingClientRect();
+
     if (rect.right > window.innerWidth) {
       menu.classList.add("flip-left");
     }
   }
 }
 
-// =====================
-// DATA STATE
-// =====================
+// ===== DATA =====
 const carList = document.getElementById("carList");
 let carsData = [];
 let initialLoadDone = false;
 
-// =====================
-// PACK LINKS
-// =====================
+// ===== PACK LINKS =====
 const packLinks = {
-  vip: "https://www.roblox.com/game-pass/984631403/VIP",
-  "starter pack": "https://www.roblox.com/game-pass/984407482/Starter-Pack",
-  "hyper pack": "https://www.roblox.com/game-pass/1260965456/Hyper-Pack",
-  "track pack": "https://www.roblox.com/game-pass/1105690213/Track-Pack"
+  'vip': 'https://www.roblox.com/game-pass/984631403/VIP',
+  'starter pack': 'https://www.roblox.com/game-pass/984407482/Starter-Pack',
+  'hyper pack': 'https://www.roblox.com/game-pass/1260965456/Hyper-Pack',
+  'track pack': 'https://www.roblox.com/game-pass/1105690213/Track-Pack'
 };
 
-// =====================
-// NORMALIZE DATA
-// =====================
+// ===== NORMALIZE DATA =====
 function normalizeCar(car) {
-  if (!car || typeof car !== "object") return null;
+  if (!car || typeof car !== "object" || Array.isArray(car)) {
+    return null;
+  }
 
   return {
     CarName: car.CarName || "Unknown Car",
     TYPE: car.TYPE || "Unknown",
     BodyKits: car.BodyKits || false,
+    ICON: car.ICON || "",
     VMAX: car.VMAX || 0,
     ACC: car.ACC || 0,
     NEWCAR: car.NEWCAR || false,
@@ -60,105 +56,134 @@ function normalizeCar(car) {
   };
 }
 
-// =====================
-// RENDER
-// =====================
+// ===== RENDER =====
 function renderCars(data) {
+
   carList.innerHTML = data.length
     ? data.map(car => {
+
         const packKey = car.PACKNAME?.toLowerCase().trim();
         const packLink = packLinks[packKey] || null;
 
-        const safeId = car.CarName.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+        const safeId = car.CarName
+          .replace(/[^a-z0-9]+/gi, "-")
+          .toLowerCase();
 
         return `
-<article class="car" id="car-${safeId}">
+<article class="car" id="car-${safeId}" tabindex="0">
+
   <h2>${car.CarName}</h2>
 
   <div class="badges">
-    ${car.NEWCAR ? '<span class="badge new">NEW</span>' : ""}
-    ${car.TYPE === "Limited" ? '<span class="badge limited">Limited</span>' : ""}
-    ${car.BodyKits ? '<span class="badge">Body Kits</span>' : ""}
-    ${car.GAMEPASSID ? '<span class="badge gamepass">Gamepass</span>' : ""}
-    ${
-      packLink
-        ? `<a class="badge pack" href="${packLink}" target="_blank">${car.PACKNAME}</a>`
-        : car.PACKNAME
-        ? `<span class="badge pack">${car.PACKNAME}</span>`
-        : ""
+    ${car.NEWCAR ? '<span class="badge new">NEW</span>' : ''}
+    ${car.TYPE === 'Limited' ? '<span class="badge limited">Limited</span>' : ''}
+    ${car.BodyKits ? '<span class="badge">Body Kits</span>' : ''}
+    ${car.GAMEPASSID ? '<span class="badge gamepass">Gamepass</span>' : ''}
+
+    ${packLink
+      ? `<a href="${packLink}" target="_blank" class="badge pack" title="Click to view this pack on Roblox">${car.PACKNAME} 🔗</a>`
+      : (car.PACKNAME
+          ? `<span class="badge pack">${car.PACKNAME}</span>`
+          : '')
     }
   </div>
 
   <div class="car-details">
-    <div><strong>Type:</strong> ${car.TYPE}</div>
-    <div><strong>In Shop:</strong> ${car.SHOP ? "Yes" : "No"}</div>
+    <div><strong>Type:</strong> ${car.TYPE || 'N/A'}</div>
+    <div><strong>In Shop:</strong> ${car.SHOP ? 'Yes' : 'No'}</div>
     <div><strong>Price:</strong> $${Number(car.PRICE).toLocaleString()}</div>
-
     <div class="rap-row">
       <strong>RAP:</strong>
-      <span id="rap-${safeId}">
-        ${car.RAP === 0 ? "N/A" : "$" + Number(car.RAP).toLocaleString()}
+      <span class="rap-value" id="rap-${safeId}">
+        ${car.RAP === 0 ? "N/A" : `$${Number(car.RAP).toLocaleString()}`}
       </span>
-      <span id="rap-delta-${safeId}"></span>
+      <span class="rap-delta" id="rap-delta-${safeId}"></span>
     </div>
-
-    <div><strong>V-Max:</strong> ${car.VMAX} MPH</div>
-    <div><strong>Horsepower:</strong> ${car.POWER} HP</div>
-    <div><strong>Acceleration:</strong> 0-60 in ${car.ACC}s</div>
-    <div><strong>EXP:</strong> ${car.EXP}</div>
+    <div><strong>V-Max:</strong> ${car.VMAX || 'N/A'} MPH</div>
+    <div><strong>Horse Power:</strong> ${car.POWER || 'N/A'} HP</div>
+    <div><strong>Acceleration:</strong> 0-60 in ${car.ACC || 'N/A'} sec</div>
+    <div><strong>EXP for Driving:</strong> ${car.EXP || 'N/A'}</div>
   </div>
+
 </article>
         `;
-      }).join("")
-    : "<p>No cars match your criteria.</p>";
+      }).join('')
+    : '<p>No cars match your criteria.</p>';
 }
 
-// =====================
-// RAP PATCH
-// =====================
+// ===== PATCH RAP (live update, no rerender) =====
 function patchRap(newData) {
   newData.forEach(newCar => {
     const existing = carsData.find(c => c.CarName === newCar.CarName);
     if (!existing) return;
 
-    const oldRap = existing.RAP;
     const newRap = newCar.RAP;
+    const oldRap = existing.RAP;
+
     if (oldRap === newRap) return;
 
-    const safeId = newCar.CarName.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+    const safeId = newCar.CarName
+      .replace(/[^a-z0-9]+/gi, "-")
+      .toLowerCase();
 
-    const rapEl = document.getElementById(`rap-${safeId}`);
-    const deltaEl = document.getElementById(`rap-delta-${safeId}`);
-    const cardEl = document.getElementById(`car-${safeId}`);
-
+    const rapEl    = document.getElementById(`rap-${safeId}`);
+    const deltaEl  = document.getElementById(`rap-delta-${safeId}`);
+    const cardEl   = document.getElementById(`car-${safeId}`);
     if (!rapEl) return;
 
     const isUp = newRap > oldRap;
     const diff = newRap - oldRap;
     const sign = isUp ? "+" : "";
 
-    rapEl.textContent = newRap === 0 ? "N/A" : `$${Number(newRap).toLocaleString()}`;
+    // ── Update value text ──
+    rapEl.textContent =
+  newRap === 0
+    ? "N/A"
+    : `$${Number(newRap).toLocaleString()}`;
 
+    // ── Delta pill: slides in, holds, then fades out ──
     if (deltaEl) {
-      deltaEl.textContent = `${sign}${diff.toLocaleString()}`;
+      // Reset cleanly
+      if (deltaEl._fadeTimer) clearTimeout(deltaEl._fadeTimer);
       deltaEl.className = "rap-delta " + (isUp ? "delta-up" : "delta-down");
+      deltaEl.textContent = `${sign}${Number(diff).toLocaleString()}`;
 
-      requestAnimationFrame(() => deltaEl.classList.add("delta-visible"));
+      // Slide in on next frame so transition fires
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          deltaEl.classList.add("delta-visible");
+        });
+      });
 
-      setTimeout(() => {
+      // Hold for 2s then fade out
+      deltaEl._fadeTimer = setTimeout(() => {
         deltaEl.classList.remove("delta-visible");
         deltaEl.classList.add("delta-fade");
-
-        setTimeout(() => {
+        deltaEl._fadeTimer = setTimeout(() => {
           deltaEl.textContent = "";
           deltaEl.className = "rap-delta";
         }, 600);
       }, 2000);
     }
 
+    // ── RAP value colour + slide animation ──
+    rapEl.classList.remove("rap-up", "rap-down");
+    void rapEl.offsetWidth; // force reflow so animation restarts cleanly
+    rapEl.classList.add(isUp ? "rap-up" : "rap-down");
+
+    if (rapEl._clearTimer) clearTimeout(rapEl._clearTimer);
+    rapEl._clearTimer = setTimeout(() => {
+      rapEl.classList.remove("rap-up", "rap-down");
+    }, 1800);
+
+    // ── Card border glow ──
     if (cardEl) {
+      cardEl.classList.remove("card-glow-up", "card-glow-down");
+      void cardEl.offsetWidth;
       cardEl.classList.add(isUp ? "card-glow-up" : "card-glow-down");
-      setTimeout(() => {
+
+      if (cardEl._glowTimer) clearTimeout(cardEl._glowTimer);
+      cardEl._glowTimer = setTimeout(() => {
         cardEl.classList.remove("card-glow-up", "card-glow-down");
       }, 1800);
     }
@@ -167,35 +192,42 @@ function patchRap(newData) {
   });
 }
 
-// =====================
-// FILTER + SORT
-// =====================
+// ===== FILTER =====
 function applyFilters() {
-  const search = document.querySelector(".filter-input").value.toLowerCase();
 
-  const types = [...document.querySelectorAll(".filter-dropdown:nth-of-type(1) input:checked")]
-    .map(i => i.value);
+  const search = document
+    .querySelector(".filter-input")
+    .value
+    .toLowerCase();
 
-  const shop = [...document.querySelectorAll(".filter-dropdown:nth-of-type(2) input:checked")]
-    .map(i => i.value);
+  const types = [
+    ...document.querySelectorAll(
+      ".filter-dropdown:nth-of-type(1) input:checked"
+    )
+  ].map(i => i.value);
 
-  const body = document.querySelectorAll(".filter-chip")[0].classList.contains("active");
-  const newC = document.querySelectorAll(".filter-chip")[1].classList.contains("active");
-  const gamepass = document.querySelectorAll(".filter-chip")[2].classList.contains("active");
+  const shop = [
+    ...document.querySelectorAll(
+      ".filter-dropdown:nth-of-type(2) input:checked"
+    )
+  ].map(i => i.value);
 
-  const minPrice = Number(document.getElementById("minPrice").value) || 0;
-  const maxPrice = Number(document.getElementById("maxPrice").value) || Infinity;
+  const chips = document.querySelectorAll(".filter-chip");
 
-  const minRap = Number(document.getElementById("minRap").value) || 0;
-  const maxRap = Number(document.getElementById("maxRap").value) || Infinity;
+  const body     = chips[0].classList.contains("active");
+  const newC     = chips[1].classList.contains("active");
+  const gamepass = chips[2].classList.contains("active");
 
-  // SORT STATE
-  const sortGroups = {};
-  document.querySelectorAll(".sort-option:checked").forEach(opt => {
-    sortGroups[opt.dataset.group] = opt.value;
-  });
+  const priceMode = document.querySelector("input[name='price']:checked").value;
+  const minPrice  = Number(document.getElementById("minPrice").value) || 0;
+  const maxPrice  = Number(document.getElementById("maxPrice").value) || Infinity;
+
+  const rapMode = document.querySelector("input[name='rap']:checked").value;
+  const minRap  = Number(document.getElementById("minRap").value) || 0;
+  const maxRap  = Number(document.getElementById("maxRap").value) || Infinity;
 
   let filtered = carsData.filter(car => {
+
     if (!car.CarName.toLowerCase().includes(search)) return false;
 
     if (types.length) {
@@ -208,98 +240,102 @@ function applyFilters() {
       if (!shop.includes(val)) return false;
     }
 
-    if (body && !car.BodyKits) return false;
-    if (newC && !car.NEWCAR) return false;
+    if (body     && !car.BodyKits)   return false;
+    if (newC     && !car.NEWCAR)     return false;
     if (gamepass && !car.GAMEPASSID) return false;
 
-    if (car.PRICE < minPrice || car.PRICE > maxPrice) return false;
-    if (car.RAP < minRap || car.RAP > maxRap) return false;
+    if (priceMode === "range") {
+      if (car.PRICE < minPrice || car.PRICE > maxPrice) return false;
+    }
+
+    if (rapMode === "range") {
+      if (car.RAP < minRap || car.RAP > maxRap) return false;
+    }
 
     return true;
   });
 
-  // SORT PRIORITY SYSTEM
-  const priority = ["vmax", "acc", "power", "exp"];
+// ===== SORT =====
+const sortMode = document.querySelector("input[name='sort']:checked")?.value || "none";
 
-  filtered.sort((a, b) => {
-    for (const group of priority) {
-      const mode = sortGroups[group];
-      if (!mode) continue;
+switch (sortMode) {
 
-      let diff = 0;
+  case "vmax-low":
+    filtered.sort((a, b) => a.VMAX - b.VMAX);
+    break;
 
-      switch (mode) {
-        case "vmax-low": diff = a.VMAX - b.VMAX; break;
-        case "vmax-high": diff = b.VMAX - a.VMAX; break;
-        case "acc-low": diff = a.ACC - b.ACC; break;
-        case "acc-high": diff = b.ACC - a.ACC; break;
-        case "power-low": diff = a.POWER - b.POWER; break;
-        case "power-high": diff = b.POWER - a.POWER; break;
-        case "exp-low": diff = a.EXP - b.EXP; break;
-        case "exp-high": diff = b.EXP - a.EXP; break;
-      }
+  case "vmax-high":
+    filtered.sort((a, b) => b.VMAX - a.VMAX);
+    break;
 
-      if (diff !== 0) return diff;
-    }
-    return 0;
-  });
+  case "acc-low":
+    // Lower 0-60 time = faster
+    filtered.sort((a, b) => a.ACC - b.ACC);
+    break;
+
+  case "acc-high":
+    filtered.sort((a, b) => b.ACC - a.ACC);
+    break;
+
+  case "power-low":
+    filtered.sort((a, b) => a.POWER - b.POWER);
+    break;
+
+  case "power-high":
+    filtered.sort((a, b) => b.POWER - a.POWER);
+    break;
+
+  case "exp-low":
+    filtered.sort((a, b) => a.EXP - b.EXP);
+    break;
+
+  case "exp-high":
+    filtered.sort((a, b) => b.EXP - a.EXP);
+    break;
+}
 
   renderCars(filtered);
 }
 
-// =====================
-// EVENTS
-// =====================
-document.querySelector(".filter-input").addEventListener("input", applyFilters);
+// ===== EVENTS =====
+document.querySelector(".filter-input")
+  .addEventListener("input", applyFilters);
 
-document.querySelectorAll(".filter-dropdown input").forEach(el =>
-  el.addEventListener("change", applyFilters)
-);
+document.querySelectorAll(".filter-dropdown input")
+  .forEach(el => el.addEventListener("change", applyFilters));
 
-document.querySelectorAll(".filter-chip").forEach(chip =>
-  chip.addEventListener("click", () => {
-    chip.classList.toggle("active");
-    applyFilters();
-  })
-);
-
-// SORT CHECKBOX RULES
-document.querySelectorAll(".sort-option").forEach(cb => {
-  cb.addEventListener("change", () => {
-    const group = cb.dataset.group;
-
-    if (cb.checked && group !== "none") {
-      document.querySelectorAll(`.sort-option[data-group="${group}"]`)
-        .forEach(o => {
-          if (o !== cb) o.checked = false;
-        });
-    }
-
-    if (cb.value === "none" && cb.checked) {
-      document.querySelectorAll(".sort-option").forEach(o => {
-        if (o !== cb) o.checked = false;
-      });
-    }
-
-    applyFilters();
+document.querySelectorAll(".filter-chip")
+  .forEach(chip => {
+    chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+      applyFilters();
+    });
   });
-});
 
-// =====================
-// LOAD DATA
-// =====================
+document.querySelectorAll("input[name='sort']")
+  .forEach(el => el.addEventListener("change", applyFilters));
+
+document.querySelectorAll("input[name='price'], #minPrice, #maxPrice")
+  .forEach(el => el.addEventListener("input", applyFilters));
+
+document.querySelectorAll("input[name='rap'], #minRap, #maxRap")
+  .forEach(el => el.addEventListener("input", applyFilters));
+
+// ===== LOAD CARS =====
 async function loadCars() {
   try {
     const res = await fetch(`https://carzonedb.github.io/assets/infojsons/cars.json?${Date.now()}`);
-    const api = await res.json();
 
-    const newCars = Object.values(api.data || {})
-      .map(normalizeCar)
-      .filter(Boolean);
+    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+
+    const api     = await res.json();
+    const rawCars = api.data || {};
+    const newCars = Object.values(rawCars).map(normalizeCar).filter(Boolean);
 
     if (!initialLoadDone) {
-      carsData = newCars;
-      initialLoadDone = true;
+      carsData         = newCars;
+      initialLoadDone  = true;
+      console.log("Cars Loaded:", carsData.length);
       renderCars(carsData);
     } else {
       patchRap(newCars);
@@ -307,8 +343,13 @@ async function loadCars() {
 
   } catch (err) {
     console.error("Failed to load cars:", err);
+
+    if (!initialLoadDone) {
+      carList.innerHTML = `<p style="color:red;">Failed to load cars data.</p>`;
+    }
   }
 }
 
+// Initial load + poll every 5 seconds
 loadCars();
 setInterval(loadCars, 15000);
