@@ -260,22 +260,6 @@ const sortMode = document.querySelector("input[name='sort']:checked")?.value || 
 
 switch (sortMode) {
 
-  case "price-low":
-    filtered.sort((a, b) => a.PRICE - b.PRICE);
-    break;
-
-  case "price-high":
-    filtered.sort((a, b) => b.PRICE - a.PRICE);
-    break;
-
-  case "rap-low":
-    filtered.sort((a, b) => a.RAP - b.RAP);
-    break;
-
-  case "rap-high":
-    filtered.sort((a, b) => b.RAP - a.RAP);
-    break;
-
   case "vmax-low":
     filtered.sort((a, b) => a.VMAX - b.VMAX);
     break;
