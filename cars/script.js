@@ -255,16 +255,60 @@ function applyFilters() {
     return true;
   });
 
-  // ===== SORT =====
-  if (priceMode === "low-high") {
+// ===== SORT =====
+const sortMode = document.querySelector("input[name='sort']:checked")?.value || "none";
+
+switch (sortMode) {
+
+  case "price-low":
     filtered.sort((a, b) => a.PRICE - b.PRICE);
-  } else if (priceMode === "high-low") {
+    break;
+
+  case "price-high":
     filtered.sort((a, b) => b.PRICE - a.PRICE);
-  } else if (rapMode === "low-high") {
+    break;
+
+  case "rap-low":
     filtered.sort((a, b) => a.RAP - b.RAP);
-  } else if (rapMode === "high-low") {
+    break;
+
+  case "rap-high":
     filtered.sort((a, b) => b.RAP - a.RAP);
-  }
+    break;
+
+  case "vmax-low":
+    filtered.sort((a, b) => a.VMAX - b.VMAX);
+    break;
+
+  case "vmax-high":
+    filtered.sort((a, b) => b.VMAX - a.VMAX);
+    break;
+
+  case "acc-low":
+    // Lower 0-60 time = faster
+    filtered.sort((a, b) => a.ACC - b.ACC);
+    break;
+
+  case "acc-high":
+    filtered.sort((a, b) => b.ACC - a.ACC);
+    break;
+
+  case "power-low":
+    filtered.sort((a, b) => a.POWER - b.POWER);
+    break;
+
+  case "power-high":
+    filtered.sort((a, b) => b.POWER - a.POWER);
+    break;
+
+  case "exp-low":
+    filtered.sort((a, b) => a.EXP - b.EXP);
+    break;
+
+  case "exp-high":
+    filtered.sort((a, b) => b.EXP - a.EXP);
+    break;
+}
 
   renderCars(filtered);
 }
@@ -283,6 +327,9 @@ document.querySelectorAll(".filter-chip")
       applyFilters();
     });
   });
+
+document.querySelectorAll("input[name='sort']")
+  .forEach(el => el.addEventListener("change", applyFilters));
 
 document.querySelectorAll("input[name='price'], #minPrice, #maxPrice")
   .forEach(el => el.addEventListener("input", applyFilters));
