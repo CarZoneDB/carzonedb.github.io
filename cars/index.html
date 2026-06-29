@@ -6,181 +6,149 @@
   
   <title>CarZoneDB - Cars</title>
   <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/CarZoneDB/CarZoneDB.github.io/refs/heads/main/assets/favicon.png">
+  <meta
+    name="description"
+    content="A fan-created database for the Roblox experience Car Zone, providing searchable and filterable information about cars, races, and other game content."
+  />
   
   <link rel="stylesheet" href="../components/base.css">
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div id="navbar"></div>
+  <div id="navbar"></div>
+  
+<main class="sect" aria-label="Filter and search cars">
+ <!-- <center><p>🛈 RAP values may lack accuracy, as they do not get updated live anymore.</p></center> -->
+  <div class="filter-bar">
 
-<main class="sect">
+    <input type="text" placeholder="Search cars..." class="filter-input">
 
-<div class="filter-bar">
-
-  <input type="text" placeholder="Search cars..." class="filter-input">
-
-  <!-- TYPE -->
-  <div class="filter-dropdown">
-    <button class="filter-btn" onclick="toggleDropdown(this)">All Types ▾</button>
-    <div class="dropdown-menu">
-      <label><input type="checkbox" value="hyper">Hyper Car</label>
-      <label><input type="checkbox" value="limited">Limited</label>
-      <label><input type="checkbox" value="suv">SUV</label>
-      <label><input type="checkbox" value="sport">Sport</label>
-      <label><input type="checkbox" value="street">Street</label>
-      <label><input type="checkbox" value="super">Super Car</label>
+    <!-- Type -->
+    <div class="filter-dropdown">
+      <button class="filter-btn" onclick="toggleDropdown(this)">All Types ▾</button>
+      <div class="dropdown-menu">
+        <div class="dropdown-header">Type</div>
+        <label class="checkbox"><input type="checkbox" value="hyper">Hyper Car</label>
+        <label class="checkbox"><input type="checkbox" value="limited">Limited</label>
+        <label class="checkbox"><input type="checkbox" value="suv">SUV</label>
+        <label class="checkbox"><input type="checkbox" value="sport">Sport</label>
+        <label class="checkbox"><input type="checkbox" value="street">Street</label>
+        <label class="checkbox"><input type="checkbox" value="super">Super Car</label>
+      </div>
     </div>
-  </div>
 
-  <!-- SORT (RADIO GROUPS PER STAT) -->
-  <div class="filter-dropdown">
-    <button class="filter-btn" onclick="toggleDropdown(this)">Sort By ▾</button>
-
-    <div class="dropdown-menu">
-
-      <div class="dropdown-header">VMax</div>
-      <label><input type="radio" name="sort-vmax" value="low">Low → High</label>
-      <label><input type="radio" name="sort-vmax" value="high">High → Low</label>
-
-      <div class="dropdown-header">Acceleration</div>
-      <label><input type="radio" name="sort-acc" value="low">Fastest</label>
-      <label><input type="radio" name="sort-acc" value="high">Slowest</label>
-
-      <div class="dropdown-header">Power</div>
-      <label><input type="radio" name="sort-power" value="low">Low → High</label>
-      <label><input type="radio" name="sort-power" value="high">High → Low</label>
-
-      <div class="dropdown-header">EXP</div>
-      <label><input type="radio" name="sort-exp" value="low">Low → High</label>
-      <label><input type="radio" name="sort-exp" value="high">High → Low</label>
-
+    <!-- Shop Status -->
+    <div class="filter-dropdown">
+      <button class="filter-btn" onclick="toggleDropdown(this)">All Shop Status ▾</button>
+      <div class="dropdown-menu">
+        <div class="dropdown-header">Shop Status</div>
+        <label class="checkbox"><input type="checkbox" value="available">In Shop</label>
+        <label class="checkbox"><input type="checkbox" value="unavailable">Not in Shop</label>
+      </div>
     </div>
-  </div>
 
+<!-- Sort -->
+<div class="filter-dropdown">
+  <button class="filter-btn" onclick="toggleDropdown(this)">Sort By ▾</button>
+
+  <div class="dropdown-menu">
+
+    <div class="dropdown-header">Sort By</div>
+
+    <label class="radio"><input type="radio" name="sort" value="none" checked>Default</label>
+
+    <label class="radio"><input type="radio" name="sort" value="vmax-low">V-Max (Low → High)</label>
+    <label class="radio"><input type="radio" name="sort" value="vmax-high">V-Max (High → Low)</label>
+
+    <label class="radio"><input type="radio" name="sort" value="acc-low">Acceleration (Fastest)</label>
+    <label class="radio"><input type="radio" name="sort" value="acc-high">Acceleration (Slowest)</label>
+
+    <label class="radio"><input type="radio" name="sort" value="power-low">Horsepower (Low → High)</label>
+    <label class="radio"><input type="radio" name="sort" value="power-high">Horsepower (High → Low)</label>
+
+    <label class="radio"><input type="radio" name="sort" value="exp-low">Driving EXP (Low → High)</label>
+    <label class="radio"><input type="radio" name="sort" value="exp-high">Driving EXP (High → Low)</label>
+
+  </div>
 </div>
+    
+    <!-- Chips -->
+    <button class="filter-chip">Body Kits</button>
+    <button class="filter-chip">New Cars</button>
+    <button class="filter-chip">Gamepass Cars</button>
+
+    <!-- Price -->
+    <div class="filter-dropdown">
+      <button class="filter-btn" onclick="toggleDropdown(this)">Price ▾</button>
+      <div class="dropdown-menu">
+
+        <div class="dropdown-header">Price</div>
+
+<label class="radio">
+  <input type="radio" name="price" value="any" checked>
+  Any Price
+</label>
+
+<label class="radio">
+  <input type="radio" name="price" value="low-high">
+  Low → High
+</label>
+
+<label class="radio">
+  <input type="radio" name="price" value="high-low">
+  High → Low
+</label>
+
+<label class="radio">
+  <input type="radio" name="price" value="range">
+  <div class="range-inputs">
+    <input type="number" id="minPrice" placeholder="Min">
+    <input type="number" id="maxPrice" placeholder="Max">
+  </div>
+</label>
+
+      </div>
+    </div>
+
+<!-- RAP -->
+    <div class="filter-dropdown">
+      <button class="filter-btn" onclick="toggleDropdown(this)">RAP ▾</button>
+      <div class="dropdown-menu">
+        <div class="dropdown-header">RAP</div>
+        <label class="radio">
+          <input type="radio" name="rap" value="any" checked>
+          Any RAP
+        </label>
+        <label class="radio">
+          <input type="radio" name="rap" value="low-high">
+          Low → High
+        </label>
+        <label class="radio">
+          <input type="radio" name="rap" value="high-low">
+          High → Low
+        </label>
+        <label class="radio">
+          <input type="radio" name="rap" value="range">
+          <div class="range-inputs">
+            <input type="number" id="minRap" placeholder="Min">
+            <input type="number" id="maxRap" placeholder="Max">
+          </div>
+        </label>
+      </div>
+    </div>
+    
+  </div>
 
 <div id="carList">
   <div class="card-container" id="card-container"></div>
 </div>
-
 </main>
 
-<div id="footer"></div>
+  <div id="footer"></div>
 
-<script src="../components/elementloader.js"></script>
-
-<script>
-// ===== DATA =====
-let carsData = [];
-
-// ===== DROPDOWN =====
-function toggleDropdown(button) {
-  const menu = button.nextElementSibling;
-  document.querySelectorAll(".dropdown-menu").forEach(d => {
-    if (d !== menu) d.classList.remove("active");
-  });
-  menu.classList.toggle("active");
-}
-
-// ===== SORT RULES =====
-function getSortRules() {
-  const rules = [];
-
-  const map = [
-    ["vmax", "VMAX"],
-    ["acc", "ACC"],
-    ["power", "POWER"],
-    ["exp", "EXP"]
-  ];
-
-  for (const [key, field] of map) {
-    const selected = document.querySelector(`input[name='sort-${key}']:checked`);
-    if (!selected) continue;
-
-    rules.push({
-      field,
-      dir: selected.value === "low" ? "asc" : "desc"
-    });
-  }
-
-  return rules;
-}
-
-// ===== MULTI SORT =====
-function multiSort(a, b, rules) {
-  for (const r of rules) {
-    const av = a[r.field] ?? 0;
-    const bv = b[r.field] ?? 0;
-
-    if (av === bv) continue;
-
-    return r.dir === "asc"
-      ? av - bv
-      : bv - av;
-  }
-  return 0;
-}
-
-// ===== FILTER + SORT =====
-function applyFilters() {
-
-  const search = document.querySelector(".filter-input").value.toLowerCase();
-
-  let filtered = carsData.filter(car =>
-    car.CarName.toLowerCase().includes(search)
-  );
-
-  const rules = getSortRules();
-
-  if (rules.length) {
-    filtered.sort((a, b) => multiSort(a, b, rules));
-  }
-
-  renderCars(filtered);
-}
-
-// ===== RENDER =====
-function renderCars(data) {
-  const el = document.getElementById("carList");
-
-  el.innerHTML = data.map(car => `
-    <div class="car">
-      <h3>${car.CarName}</h3>
-      <p>VMax: ${car.VMAX}</p>
-      <p>ACC: ${car.ACC}</p>
-      <p>Power: ${car.POWER}</p>
-      <p>EXP: ${car.EXP}</p>
-    </div>
-  `).join('');
-}
-
-// ===== EVENTS =====
-document.querySelector(".filter-input")
-  .addEventListener("input", applyFilters);
-
-document.querySelectorAll("input[type='radio']")
-  .forEach(el => el.addEventListener("change", applyFilters));
-
-// ===== LOAD DATA (example) =====
-async function loadCars() {
-  const res = await fetch("https://carzonedb.github.io/assets/infojsons/cars.json");
-  const json = await res.json();
-
-  carsData = Object.values(json.data).map(c => ({
-    CarName: c.CarName,
-    VMAX: c.VMAX,
-    ACC: c.ACC,
-    POWER: c.POWER,
-    EXP: c.EXP
-  }));
-
-  applyFilters();
-}
-
-loadCars();
-</script>
-
+  <script src="../components/elementloader.js"></script>
+  <script src="script.js"></script>
+  
 </body>
 </html>
