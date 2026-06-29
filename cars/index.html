@@ -49,26 +49,63 @@
     </div>
 
 <!-- Sort -->
-<div class="filter-dropdown">
-  <button class="filter-btn" onclick="toggleDropdown(this)">Sort By ▾</button>
+<!-- DEFAULT (optional reset-style option) -->
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="none" value="none" checked>
+      Default
+    </label>
 
-  <div class="dropdown-menu">
+    <hr>
 
-    <div class="dropdown-header">Sort By</div>
+    <!-- VMAX -->
+    <div class="dropdown-header">V-Max</div>
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="vmax" value="vmax-low">
+      V-Max (Low → High)
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="vmax" value="vmax-high">
+      V-Max (High → Low)
+    </label>
 
-    <label class="radio"><input type="radio" name="sort" value="none" checked>Default</label>
+    <hr>
 
-    <label class="radio"><input type="radio" name="sort" value="vmax-low">V-Max (Low → High)</label>
-    <label class="radio"><input type="radio" name="sort" value="vmax-high">V-Max (High → Low)</label>
+    <!-- ACCELERATION -->
+    <div class="dropdown-header">Acceleration</div>
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="acc" value="acc-low">
+      Acceleration (Fastest)
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="acc" value="acc-high">
+      Acceleration (Slowest)
+    </label>
 
-    <label class="radio"><input type="radio" name="sort" value="acc-low">Acceleration (Fastest)</label>
-    <label class="radio"><input type="radio" name="sort" value="acc-high">Acceleration (Slowest)</label>
+    <hr>
 
-    <label class="radio"><input type="radio" name="sort" value="power-low">Horsepower (Low → High)</label>
-    <label class="radio"><input type="radio" name="sort" value="power-high">Horsepower (High → Low)</label>
+    <!-- HORSEPOWER -->
+    <div class="dropdown-header">Horsepower</div>
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="power" value="power-low">
+      Horsepower (Low → High)
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="power" value="power-high">
+      Horsepower (High → Low)
+    </label>
 
-    <label class="radio"><input type="radio" name="sort" value="exp-low">Driving EXP (Low → High)</label>
-    <label class="radio"><input type="radio" name="sort" value="exp-high">Driving EXP (High → Low)</label>
+    <hr>
+
+    <!-- EXP -->
+    <div class="dropdown-header">Driving EXP</div>
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="exp" value="exp-low">
+      EXP (Low → High)
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" class="sort-option" data-group="exp" value="exp-high">
+      EXP (High → Low)
+    </label>
 
   </div>
 </div>
