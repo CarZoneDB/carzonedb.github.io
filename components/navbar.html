@@ -16,10 +16,44 @@ body {
     padding-top: 64px;
 }
 
+/* ================= RETIREMENT NOTICE ================= */
+.notice-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+
+    background: #ffcc00;
+    color: #222;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-weight: 600;
+    font-size: 14px;
+
+    z-index: 400;
+
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+}
+
+.notice-banner a {
+    color: inherit;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Move navbar below the notice */
+.navbar {
+    top: 40px;
+}
+    
 /* ================= NAVBAR ================= */
 .navbar {
     position: fixed;
-    top: 0;
+    /*top: 0;*/
     left: 0;
     width: 100%;
     height: 64px;
@@ -137,6 +171,7 @@ body {
 }
 </style>
 
+<div class="notice-banner">⚠️ This website will retire soon. The database will no longer be updated, but the website will remain available.</div>
 <nav class="navbar">
     <div class="nav-header">
         <img class="logo" src="https://carzonedb.github.io/assets/favicon.png" alt="Logo">
