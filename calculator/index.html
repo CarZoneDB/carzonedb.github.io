@@ -21,11 +21,16 @@
 
   <main class="sect" aria-label="Upgrade cost calculator">
 
-    <div class="filter-bar">
+    <div class="filter-bar" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
       <input type="text" placeholder="Search cars..." class="filter-input" id="carSearch" oninput="filterCars()">
       <select class="filter-select" id="carSelect" onchange="onCarSelect()">
         <option value="">Select a car...</option>
       </select>
+      
+      <div style="display: flex; align-items: center; gap: 5px;">
+        <span style="font-weight: bold; color: var(--text-color, inherit);">Or enter Custom Price:</span>
+        <input type="number" placeholder="e.g. 50000" class="filter-input" id="customPriceInput" oninput="onCustomPriceInput()" min="0" style="max-width: 150px;">
+      </div>
     </div>
 
 <br>
@@ -194,9 +199,36 @@
     // ===== On Car Select =====
     function onCarSelect() {
       const name = document.getElementById('carSelect').value;
-      selectedCar = allCars.find(c => c.CarName === name) || null;
+      if (name) {
+        // Clear custom value if selecting a standard car
+        document.getElementById('customPriceInput').value = '';
+        selectedCar = allCars.find(c => c.CarName === name) || null;
+      } else {
+        selectedCar = null;
+      }
       breakdownVisible = false;
       renderCalc();
+    }
+
+    // ===== On Custom Price Input =====
+    function onCustomPriceInput() {
+      const val = parseFloat(document.getElementById('customPriceInput').value);
+      if (!isNaN(val) && val >= 0) {
+        // Reset list selector to empty option
+        document.getElementById('carSelect').value = "";
+        
+        // Mock a car object dynamically
+        selectedCar = {
+          CarName: "Custom Vehicle",
+          TYPE: "Custom",
+          NEWCAR: false,
+          PRICE: val
+        };
+        renderCalc();
+      } else {
+        selectedCar = null;
+        renderCalc();
+      }
     }
 
     // ===== Render Calculator =====
