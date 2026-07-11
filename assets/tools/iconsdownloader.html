@@ -243,23 +243,21 @@ async function start(){
     return;
   }
 
-  // Parse Cars
   const items=Object.entries(carData.data || {})
     .filter(x => x[1] && typeof x[1] === "object" && !Array.isArray(x[1]) && x[1].ICON)
     .map(([n,v]) => ({
       n: v.CarName || n,
       id: v.ICON.replace("rbxassetid://",""),
-      folder: "car_icons" // Tag it as a car icon
+      folder: "car_icons"
     }));
 
-  // Parse Races
   if(raceData && raceData.data){
     Object.entries(raceData.data).forEach(([n,v]) => {
       if(v && v.map){
         items.push({
           n: n,
           id: v.map.replace("rbxassetid://",""),
-          folder: "race_maps" // Tag it as a race map
+          folder: "race_maps"
         });
       }
     });
@@ -288,7 +286,7 @@ async function start(){
             resolved.push({
               n: group[idx].n,
               u: d.imageUrl,
-              folder: group[idx].folder // Carry the folder destination over
+              folder: group[idx].folder
             });
           }else{
             log("Skip: "+group[idx].n);
@@ -340,7 +338,6 @@ async function start(){
         return;
       }
 
-      // Build the folder path structure inside the ZIP
       const safeName = n.replace(/\W/g,"_")+".png";
       add(`${folder}/${safeName}`, buf);
       log("Saved: "+n);
