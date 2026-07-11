@@ -2,8 +2,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Car Icons Downloader</title>
-<link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/CarZoneDB/CarZoneDB.github.io/refs/heads/main/assets/favicon.png">
+<title>Icons Downloader</title>
+<link rel="icon" type="image/x-icon" href="https://carzonedb.github.io/assets/favicon.png">
 
 <script src="https://unpkg.com/fflate@0.8.2/umd/index.js"></script>
 
@@ -33,7 +33,7 @@ Running locally uses your own IP, making downloads faster and more reliable.<br>
 <button onclick="downloadHTML()">⬇ Download this HTML</button><br><br>
 
 <b>• Batch</b><br>
-How many cars are requested per API call.<br>
+How many icons are requested per API call.<br>
 → <b>100 = best balance</b> (fast + safe)<br><br>
 
 <b>• Resolution</b><br>
@@ -46,9 +46,9 @@ Skips broken, empty, or not-yet-generated thumbnails.<br><br>
 
 <b>• ZIP filename</b><br>
 Saved as:<br>
-<b>CarZone_images_YYYY-MM-DDTHH-MM-SS.zip</b><br>
+<b>CarZone_icons_YYYY-MM-DDTHH-MM-SS.zip</b><br>
 Example:<br>
-CarZone_images_2026-03-18T12-34-56.zip<br>
+CarZone_icons_2026-03-18T12-34-56.zip<br>
 → Includes the exact date & time of download<br><br>
 
 <b>Speed is auto-adjusted to avoid rate limits.</b>
@@ -90,7 +90,7 @@ function toggleGuide(){
 
 async function downloadHTML(){
   try{
-    const url = "https://raw.githubusercontent.com/CarZoneDB/CarZoneDB.github.io/refs/heads/main/assets/tools/cariconsdownloader.html";
+    const url = "https://carzonedb.github.io/assets/tools/iconsdownloader.html";
 
     const res = await fetch(url, {cache: "no-store"});
     const text = await res.text();
@@ -99,7 +99,7 @@ async function downloadHTML(){
     const a = document.createElement("a");
 
     a.href = URL.createObjectURL(blob);
-    a.download = "carzone_cariconsdownloader.html";
+    a.download = "carzone_iconsdownloader.html";
     a.click();
 
   }catch(e){
@@ -229,39 +229,50 @@ async function start(){
   const S=s.value.split(" ")[0];
   const SK=sk.checked;
 
-  log("Loading car list...");
+  log("Loading lists...");
 
-  let data;
+  let carData, raceData;
   try{
-    const r=await fetchSafe(
-      "https://carzonedb.github.io/assets/infojsons/cars.json"
-    );
-    data=await r.json();
+    const rCar=await fetchSafe("https://carzonedb.github.io/assets/infojsons/cars.json");
+    carData=await rCar.json();
+    
+    const rRace=await fetchSafe("https://carzonedb.github.io/assets/infojsons/races.json");
+    raceData=await rRace.json();
   }catch{
-    log("Failed to load car list.");
+    log("Failed to load car or race lists.");
     return;
   }
 
-const cars=Object.entries(data.data || {})
-  .filter(x =>
-    x[1] &&
-    typeof x[1] === "object" &&
-    !Array.isArray(x[1]) &&
-    x[1].ICON
-  )
-  .map(([n,v]) => ({
-    n: v.CarName || n,
-    id: v.ICON.replace("rbxassetid://","")
-  }));
+  // Parse Cars
+  const items=Object.entries(carData.data || {})
+    .filter(x => x[1] && typeof x[1] === "object" && !Array.isArray(x[1]) && x[1].ICON)
+    .map(([n,v]) => ({
+      n: v.CarName || n,
+      id: v.ICON.replace("rbxassetid://",""),
+      folder: "car_icons" // Tag it as a car icon
+    }));
 
-  log("Images found: "+cars.length);
+  // Parse Races
+  if(raceData && raceData.data){
+    Object.entries(raceData.data).forEach(([n,v]) => {
+      if(v && v.map){
+        items.push({
+          n: n,
+          id: v.map.replace("rbxassetid://",""),
+          folder: "race_maps" // Tag it as a race map
+        });
+      }
+    });
+  }
+
+  log("Total images found (Cars + Races): "+items.length);
 
   adjustLoop=setInterval(adjust,1500);
 
   let resolved=[],queue=[];
 
-  for(let i=0;i<cars.length;i+=B){
-    const group=cars.slice(i,i+B);
+  for(let i=0;i<items.length;i+=B){
+    const group=items.slice(i,i+B);
 
     queue.push(async()=>{
       if(abort) return;
@@ -272,11 +283,15 @@ const cars=Object.entries(data.data || {})
         );
         const j=await r.json();
 
-        j.data.forEach((d,i)=>{
+        j.data.forEach((d,idx)=>{
           if(d?.imageUrl){
-            resolved.push({n:group[i].n,u:d.imageUrl});
+            resolved.push({
+              n: group[idx].n,
+              u: d.imageUrl,
+              folder: group[idx].folder // Carry the folder destination over
+            });
           }else{
-            log("Skip: "+group[i].n);
+            log("Skip: "+group[idx].n);
           }
         });
 
@@ -311,11 +326,11 @@ const cars=Object.entries(data.data || {})
     f.push(data,true);
   };
 
-  let dlQueue=resolved.map(({n,u})=>async()=>{
+  let dlQueue=resolved.map(({n,u,folder})=>async()=>{
     if(abort) return;
 
     try{
-      log("Downloading: "+n);
+      log(`Downloading [${folder}]: `+n);
 
       const r=await fetchSafe(u,"arraybuffer");
       const buf=new Uint8Array(await r.arrayBuffer());
@@ -325,7 +340,9 @@ const cars=Object.entries(data.data || {})
         return;
       }
 
-      add("czcarimages/"+n.replace(/\W/g,"_")+".png",buf);
+      // Build the folder path structure inside the ZIP
+      const safeName = n.replace(/\W/g,"_")+".png";
+      add(`${folder}/${safeName}`, buf);
       log("Saved: "+n);
 
     }catch{
@@ -344,7 +361,7 @@ const cars=Object.entries(data.data || {})
   }
 
   const stamp=new Date().toISOString().replace(/[:.]/g,"-");
-  const filename=`CarZone_car_images_${stamp}.zip`;
+  const filename=`CarZone_icons_${stamp}.zip`;
 
   log("Finalizing ZIP...");
   zip.end();
