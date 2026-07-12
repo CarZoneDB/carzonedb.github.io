@@ -61,16 +61,20 @@ function normalizeCar(car) {
     PRICE: car.PRICE || 0,
     RAP: car.RAP || 0,
     PACKNAME: car.PACKNAME || null,
-    GAMEPASSID: car.GAMEPASSID || null
+    GAMEPASSID: car.GAMEPASSID || null,
+
+    // keep ratings
+    LIKES: 0,
+    DISLIKES: 0,
+    VOTES: 0,
+    RATING: 0
   };
 }
 
 // ===== RENDER =====
 function renderCars(data) {
-
   carList.innerHTML = data.length
     ? data.map(car => {
-
         const packKey = car.PACKNAME?.toLowerCase().trim();
         const packLink = packLinks[packKey] || null;
 
@@ -80,7 +84,6 @@ function renderCars(data) {
 
         return `
 <article class="car" id="car-${safeId}" tabindex="0">
-
   <h2>${car.CarName}</h2>
 
   <div class="badges">
@@ -114,27 +117,18 @@ function renderCars(data) {
     <div><strong>EXP for Driving:</strong> ${car.EXP || 'N/A'}</div>
   </div>
 
-<div class="rating">
-
-<button onclick="vote('${car.CarName}', 'like')">
-👍 <span id="likes-${safeId}">0</span>
-</button>
-
-<button onclick="vote('${car.CarName}', 'dislike')">
-👎 <span id="dislikes-${safeId}">0</span>
-</button>
-
-</div>
-
+  <div class="rating">
+    <button onclick="vote('${car.CarName}', 'like')">
+      👍 <span id="likes-${safeId}">${car.LIKES}</span>
+    </button>
+    <button onclick="vote('${car.CarName}', 'dislike')">
+      👎 <span id="dislikes-${safeId}">${car.DISLIKES}</span>
+    </button>
+  </div>
 </article>
         `;
       }).join('')
     : '<p>No cars match your criteria.</p>';
-
-  data.forEach(car=>{
-    loadRating(car.CarName);
-});
-  
 }
 
 // ===== PATCH RAP (live update, no rerender) =====
@@ -163,25 +157,22 @@ function patchRap(newData) {
 
     // ── Update value text ──
     rapEl.textContent =
-  newRap === 0
-    ? "N/A"
-    : `$${Number(newRap).toLocaleString()}`;
+      newRap === 0
+        ? "N/A"
+        : `$${Number(newRap).toLocaleString()}`;
 
     // ── Delta pill: slides in, holds, then fades out ──
     if (deltaEl) {
-      // Reset cleanly
       if (deltaEl._fadeTimer) clearTimeout(deltaEl._fadeTimer);
       deltaEl.className = "rap-delta " + (isUp ? "delta-up" : "delta-down");
       deltaEl.textContent = `${sign}${Number(diff).toLocaleString()}`;
 
-      // Slide in on next frame so transition fires
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           deltaEl.classList.add("delta-visible");
         });
       });
 
-      // Hold for 2s then fade out
       deltaEl._fadeTimer = setTimeout(() => {
         deltaEl.classList.remove("delta-visible");
         deltaEl.classList.add("delta-fade");
@@ -194,7 +185,7 @@ function patchRap(newData) {
 
     // ── RAP value colour + slide animation ──
     rapEl.classList.remove("rap-up", "rap-down");
-    void rapEl.offsetWidth; // force reflow so animation restarts cleanly
+    void rapEl.offsetWidth; 
     rapEl.classList.add(isUp ? "rap-up" : "rap-down");
 
     if (rapEl._clearTimer) clearTimeout(rapEl._clearTimer);
@@ -220,7 +211,6 @@ function patchRap(newData) {
 
 // ===== FILTER =====
 function applyFilters() {
-
   const search = document
     .querySelector(".filter-input")
     .value
@@ -253,7 +243,6 @@ function applyFilters() {
   const maxRap  = Number(document.getElementById("maxRap").value) || Infinity;
 
   let filtered = carsData.filter(car => {
-
     if (!car.CarName.toLowerCase().includes(search)) return false;
 
     if (types.length) {
@@ -281,83 +270,60 @@ function applyFilters() {
     return true;
   });
 
-// ===== SORT =====
-const sortMode = document.querySelector("input[name='sort']:checked")?.value || "none";
+  // ===== SORT =====
+  const sortMode = document.querySelector("input[name='sort']:checked")?.value || "none";
 
-switch (sortMode) {
-
-  case "vmax-low":
-    filtered.sort((a, b) => a.VMAX - b.VMAX);
-    break;
-
-  case "vmax-high":
-    filtered.sort((a, b) => b.VMAX - a.VMAX);
-    break;
-
-  case "acc-low":
-    // Lower 0-60 time = faster
-    filtered.sort((a, b) => a.ACC - b.ACC);
-    break;
-
-  case "acc-high":
-    filtered.sort((a, b) => b.ACC - a.ACC);
-    break;
-
-  case "power-low":
-    filtered.sort((a, b) => a.POWER - b.POWER);
-    break;
-
-  case "power-high":
-    filtered.sort((a, b) => b.POWER - a.POWER);
-    break;
-
-  case "exp-low":
-    filtered.sort((a, b) => a.EXP - b.EXP);
-    break;
-
-  case "exp-high":
-    filtered.sort((a, b) => b.EXP - a.EXP);
-    break;
-
+  switch (sortMode) {
+    case "vmax-low":
+      filtered.sort((a, b) => a.VMAX - b.VMAX);
+      break;
+    case "vmax-high":
+      filtered.sort((a, b) => b.VMAX - a.VMAX);
+      break;
+    case "acc-low":
+      filtered.sort((a, b) => a.ACC - b.ACC);
+      break;
+    case "acc-high":
+      filtered.sort((a, b) => b.ACC - a.ACC);
+      break;
+    case "power-low":
+      filtered.sort((a, b) => a.POWER - b.POWER);
+      break;
+    case "power-high":
+      filtered.sort((a, b) => b.POWER - a.POWER);
+      break;
+    case "exp-low":
+      filtered.sort((a, b) => a.EXP - b.EXP);
+      break;
+    case "exp-high":
+      filtered.sort((a, b) => b.EXP - a.EXP);
+      break;
     case "ratings-high":
-  filtered.sort((a,b) => b.VOTES - a.VOTES);
-  break;
-
-case "ratings-low":
-  filtered.sort((a,b) => a.VOTES - b.VOTES);
-  break;
-}
+      filtered.sort((a,b) => (b.LIKES - b.DISLIKES) - (a.LIKES - a.DISLIKES));
+      break;
+    case "ratings-low":
+      filtered.sort((a,b) => (a.LIKES - a.DISLIKES) - (b.LIKES - b.DISLIKES));
+      break;
+  }
 
   renderCars(filtered);
 }
 
 // ===== EVENTS =====
-document.querySelector(".filter-input")
-  .addEventListener("input", applyFilters);
-
-document.querySelectorAll(".filter-dropdown input")
-  .forEach(el => el.addEventListener("change", applyFilters));
-
-document.querySelectorAll(".filter-chip")
-  .forEach(chip => {
-    chip.addEventListener("click", () => {
-      chip.classList.toggle("active");
-      applyFilters();
-    });
+document.querySelector(".filter-input").addEventListener("input", applyFilters);
+document.querySelectorAll(".filter-dropdown input").forEach(el => el.addEventListener("change", applyFilters));
+document.querySelectorAll(".filter-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    chip.classList.toggle("active");
+    applyFilters();
   });
+});
+document.querySelectorAll("input[name='sort']").forEach(el => el.addEventListener("change", applyFilters));
+document.querySelectorAll("input[name='price'], #minPrice, #maxPrice").forEach(el => el.addEventListener("input", applyFilters));
+document.querySelectorAll("input[name='rap'], #minRap, #maxRap").forEach(el => el.addEventListener("input", applyFilters));
 
-document.querySelectorAll("input[name='sort']")
-  .forEach(el => el.addEventListener("change", applyFilters));
-
-document.querySelectorAll("input[name='price'], #minPrice, #maxPrice")
-  .forEach(el => el.addEventListener("input", applyFilters));
-
-document.querySelectorAll("input[name='rap'], #minRap, #maxRap")
-  .forEach(el => el.addEventListener("input", applyFilters));
-
-// Load ratings
+// Batch Load ratings
 async function addCommunityVotes(cars){
-
   const { data, error } = await supabase
     .from("car_ratings")
     .select("*");
@@ -368,34 +334,32 @@ async function addCommunityVotes(cars){
   }
 
   return cars.map(car => {
-
-    const rating = data.find(
-      r => r.car_name === car.CarName
-    );
-
+    const rating = data.find(r => r.car_name === car.CarName);
+    const likes = rating?.likes || 0;
+    const dislikes = rating?.dislikes || 0;
+    const total = likes + dislikes;
+      
     return {
       ...car,
-      LIKES: rating?.likes || 0,
-      DISLIKES: rating?.dislikes || 0,
-      VOTES: (rating?.likes || 0) + (rating?.dislikes || 0)
+      LIKES: likes,
+      DISLIKES: dislikes,
+      VOTES: total,
+      RATING: total ? likes / total : 0
     };
-
   });
-
 }
 
 // ===== LOAD CARS =====
 async function loadCars() {
   try {
     const res = await fetch(`https://carzonedb.github.io/assets/infojsons/cars.json?${Date.now()}`);
-
     if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
 
     const api     = await res.json();
     const rawCars = api.data || {};
     let newCars = Object.values(rawCars).map(normalizeCar).filter(Boolean);
 
-newCars = await addCommunityVotes(newCars);
+    newCars = await addCommunityVotes(newCars);
 
     if (!initialLoadDone) {
       carsData         = newCars;
@@ -404,119 +368,99 @@ newCars = await addCommunityVotes(newCars);
       renderCars(carsData);
     } else {
       patchRap(newCars);
-    }
 
+      newCars.forEach(newCar => {
+        const oldCar = carsData.find(c => c.CarName === newCar.CarName);
+        if(oldCar){
+          newCar.LIKES = oldCar.LIKES || 0;
+          newCar.DISLIKES = oldCar.DISLIKES || 0;
+          newCar.VOTES = newCar.LIKES + newCar.DISLIKES;
+          newCar.RATING = newCar.VOTES ? newCar.LIKES / newCar.VOTES : 0;
+        }
+      });
+
+      carsData = newCars;
+      applyFilters();
+    }
   } catch (err) {
     console.error("Failed to load cars:", err);
-
     if (!initialLoadDone) {
       carList.innerHTML = `<p style="color:red;">Failed to load cars data.</p>`;
     }
   }
 }
 
-// like dislike stuff
-async function loadRating(carName){
-
-  const safeId = carName
-    .replace(/[^a-z0-9]+/gi, "-")
-    .toLowerCase();
-
-
-  const {data,error} = await supabase
-    .from("car_ratings")
-    .select("*")
-    .eq("car_name", carName)
-    .maybeSingle();
-
-
-  if(error || !data) return;
-
-
-  document.getElementById(
-    `likes-${safeId}`
-  ).textContent = data.likes;
-
-
-  document.getElementById(
-    `dislikes-${safeId}`
-  ).textContent = data.dislikes;
-
-}
-
-
-
-async function vote(carName,type){
-
-  const alreadyVoted =
-    localStorage.getItem(
-      "vote-"+carName
-    );
-
-
+// ===== VOTING SYSTEM =====
+async function vote(carName, type){
+  // Check localStorage first
+  const alreadyVoted = localStorage.getItem("vote-" + carName);
   if(alreadyVoted){
     alert("You already voted for this car!");
     return;
   }
 
+  // Double click protection race-guard
+  if(window.voting) return;
+  window.voting = true;
 
-
-  const {data} = await supabase
-    .from("car_ratings")
-    .select("*")
-    .eq("car_name",carName)
-    .maybeSingle();
-
-
-
-  if(!data){
-
-    await supabase
+  try {
+    const { data } = await supabase
       .from("car_ratings")
-      .insert({
-        car_name:carName,
-        likes:type==="like" ? 1 : 0,
-        dislikes:type==="dislike" ? 1 : 0
-      });
+      .select("*")
+      .eq("car_name", carName)
+      .maybeSingle();
 
+    if(!data){
+      await supabase
+        .from("car_ratings")
+        .insert({
+          car_name: carName,
+          likes: type === "like" ? 1 : 0,
+          dislikes: type === "dislike" ? 1 : 0
+        });
+    } else {
+      await supabase
+        .from("car_ratings")
+        .update({
+          likes: type === "like" ? data.likes + 1 : data.likes,
+          dislikes: type === "dislike" ? data.dislikes + 1 : data.dislikes
+        })
+        .eq("car_name", carName);
+    }
 
-  } else {
+    localStorage.setItem("vote-" + carName, "true");
 
+    // Fix: Locate car and execute UI updates AFTER initializing it
+    const car = carsData.find(c => c.CarName === carName);
+    if (car) {
+      if (type === "like") car.LIKES++;
+      if (type === "dislike") car.DISLIKES++;
 
-    await supabase
-      .from("car_ratings")
-      .update({
+      car.VOTES = car.LIKES + car.DISLIKES;
+      car.RATING = car.VOTES ? car.LIKES / car.VOTES : 0;
 
-        likes:
-        type==="like"
-        ? data.likes+1
-        : data.likes,
+      const safeId = carName.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+      const likesEl = document.getElementById(`likes-${safeId}`);
+      const dislikesEl = document.getElementById(`dislikes-${safeId}`);
 
+      if (likesEl) likesEl.textContent = car.LIKES;
+      if (dislikesEl) dislikesEl.textContent = car.DISLIKES;
 
-        dislikes:
-        type==="dislike"
-        ? data.dislikes+1
-        : data.dislikes
-
-      })
-      .eq("car_name",carName);
-
+      const sort = document.querySelector("input[name='sort']:checked")?.value;
+      if (sort === "ratings-high" || sort === "ratings-low") {
+        applyFilters();
+      }
+    }
+  } catch (err) {
+    console.error("Voting error: ", err);
+  } finally {
+    // Release the protection latch
+    window.voting = false;
   }
-
-  localStorage.setItem(
-    "vote-"+carName,
-    true
-  );
-
-
-  loadRating(carName);
-
 }
 
-  window.vote = vote;
+window.vote = vote;
 
-
-// Initial load + poll every 5 seconds
-
+// Initial load + poll every 15 seconds
 loadCars();
 setInterval(loadCars, 15000);
