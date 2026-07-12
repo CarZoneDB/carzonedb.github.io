@@ -404,22 +404,28 @@ async function vote(carName, type){
       .eq("car_name", carName)
       .maybeSingle();
 
-    if(!data){
-      await supabase
-        .from("car_ratings")
-        .insert({
-          car_name: carName,
-          likes: type === "like" ? 1 : 0,
-          dislikes: type === "dislike" ? 1 : 0
-        });
-    } else {
-      await supabase
-        .from("car_ratings")
-        .update({
-          likes: type === "like" ? data.likes + 1 : data.likes,
-          dislikes: type === "dislike" ? data.dislikes + 1 : data.dislikes
-        })
-        .eq("car_name", carName);
+if(!data){
+  const { error } = await supabase
+    .from("car_ratings")
+    .insert({
+      car_name: carName,
+      likes: type === "like" ? 1 : 0,
+      dislikes: type === "dislike" ? 1 : 0
+    });
+
+  if(error) throw error;
+
+} else {
+  const { error } = await supabase
+    .from("car_ratings")
+    .update({
+      likes: type === "like" ? data.likes + 1 : data.likes,
+      dislikes: type === "dislike" ? data.dislikes + 1 : data.dislikes
+    })
+    .eq("car_name", carName);
+
+  if(error) throw error;
+}q("car_name", carName);
     }
 
     localStorage.setItem("vote-" + carName, "true");
