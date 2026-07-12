@@ -1,3 +1,10 @@
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const supabase = createClient(
+  "https://kroqqjuhuilvzrfuuvvj.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3FxanVodWlsdnpyZnV1dnZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NTg4NzksImV4cCI6MjA5OTQzNDg3OX0.pnPPwWVQuruW0CQ1ELwGyOtgNgP9VWmlLB40X-GHaG4"
+);
+
 // ===== Dropdown =====
 function toggleDropdown(button) {
   const menu = button.nextElementSibling;
@@ -88,6 +95,18 @@ function renderCars(data) {
     }
   </div>
 
+<div class="rating">
+
+<button onclick="vote('${car.CarName}', 'like')">
+👍 <span id="likes-${safeId}">0</span>
+</button>
+
+<button onclick="vote('${car.CarName}', 'dislike')">
+👎 <span id="dislikes-${safeId}">0</span>
+</button>
+
+</div>
+
   <div class="car-details">
     <div><strong>Type:</strong> ${car.TYPE || 'N/A'}</div>
     <div><strong>In Shop:</strong> ${car.SHOP ? 'Yes' : 'No'}</div>
@@ -109,6 +128,11 @@ function renderCars(data) {
         `;
       }).join('')
     : '<p>No cars match your criteria.</p>';
+
+  data.forEach(car=>{
+    loadRating(car.CarName);
+});
+  
 }
 
 // ===== PATCH RAP (live update, no rerender) =====
@@ -349,6 +373,107 @@ async function loadCars() {
     }
   }
 }
+
+// like dislike stuff
+async function loadRating(carName){
+
+  const safeId = carName
+    .replace(/[^a-z0-9]+/gi, "-")
+    .toLowerCase();
+
+
+  const {data,error} = await supabase
+    .from("car_ratings")
+    .select("*")
+    .eq("car_name", carName)
+    .maybeSingle();
+
+
+  if(error || !data) return;
+
+
+  document.getElementById(
+    `likes-${safeId}`
+  ).textContent = data.likes;
+
+
+  document.getElementById(
+    `dislikes-${safeId}`
+  ).textContent = data.dislikes;
+
+}
+
+
+
+async function vote(carName,type){
+
+  const alreadyVoted =
+    localStorage.getItem(
+      "vote-"+carName
+    );
+
+
+  if(alreadyVoted){
+    alert("You already voted for this car!");
+    return;
+  }
+
+
+
+  const {data} = await supabase
+    .from("car_ratings")
+    .select("*")
+    .eq("car_name",carName)
+    .maybeSingle();
+
+
+
+  if(!data){
+
+    await supabase
+      .from("car_ratings")
+      .insert({
+        car_name:carName,
+        likes:type==="like" ? 1 : 0,
+        dislikes:type==="dislike" ? 1 : 0
+      });
+
+
+  } else {
+
+
+    await supabase
+      .from("car_ratings")
+      .update({
+
+        likes:
+        type==="like"
+        ? data.likes+1
+        : data.likes,
+
+
+        dislikes:
+        type==="dislike"
+        ? data.dislikes+1
+        : data.dislikes
+
+      })
+      .eq("car_name",carName);
+
+  }
+
+  localStorage.setItem(
+    "vote-"+carName,
+    true
+  );
+
+
+  loadRating(carName);
+
+}
+
+  window.vote = vote;
+
 
 // Initial load + poll every 5 seconds
 loadCars();
