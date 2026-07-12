@@ -26,6 +26,8 @@ function toggleDropdown(button) {
   }
 }
 
+window.toggleDropdown = toggleDropdown;
+
 // ===== DATA =====
 const carList = document.getElementById("carList");
 let carsData = [];
