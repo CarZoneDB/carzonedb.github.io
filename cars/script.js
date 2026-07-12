@@ -298,6 +298,14 @@ function applyFilters() {
     case "exp-high":
       filtered.sort((a, b) => b.EXP - a.EXP);
       break;
+    case "ratings-high":
+      // Sorts by highest rating. If ratings match, it defaults to the one with more votes.
+      filtered.sort((a, b) => (b.RATING - a.RATING) || (b.VOTES - a.VOTES));
+      break;
+    case "ratings-low":
+      // Sorts by lowest rating. If ratings match, it defaults to the one with fewer votes.
+      filtered.sort((a, b) => (a.RATING - b.RATING) || (a.VOTES - b.VOTES));
+      break;
     // Rating sorting options have been completely removed here
   }
 
