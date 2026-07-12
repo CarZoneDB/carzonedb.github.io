@@ -400,7 +400,6 @@
 .rating {
   display: flex;
   gap: 8px;
-  margin: 12px 0;
 }
 
 .rating button {
