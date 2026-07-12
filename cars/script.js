@@ -2,7 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const supabase = createClient(
   "https://kroqqjuhuilvzrfuuvvj.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3FxanVodWlsdnpyZnV1dnZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NTg4NzksImV4cCI6MjA5OTQzNDg3OX0.pnPPwWVQuruW0CQ1ELwGyOtgNgP9VWmlLB40X-GHaG4"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3FxanVodWlsvnpyZnV1dnZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NTg4NzksImV4cCI6MjA5OTQzNDg3OX0.pnPPwWVQuruW0CQ1ELwGyOtgNgP9VWmlLB40X-GHaG4"
 );
 
 // ===== Dropdown =====
@@ -298,12 +298,7 @@ function applyFilters() {
     case "exp-high":
       filtered.sort((a, b) => b.EXP - a.EXP);
       break;
-    case "ratings-high":
-      filtered.sort((a,b) => (b.LIKES - b.DISLIKES) - (a.LIKES - a.DISLIKES));
-      break;
-    case "ratings-low":
-      filtered.sort((a,b) => (a.LIKES - a.DISLIKES) - (b.LIKES - b.DISLIKES));
-      break;
+    // Rating sorting options have been completely removed here
   }
 
   renderCars(filtered);
