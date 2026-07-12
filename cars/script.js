@@ -316,6 +316,14 @@ switch (sortMode) {
   case "exp-high":
     filtered.sort((a, b) => b.EXP - a.EXP);
     break;
+
+    case "ratings-high":
+  filtered.sort((a,b) => b.VOTES - a.VOTES);
+  break;
+
+case "ratings-low":
+  filtered.sort((a,b) => a.VOTES - b.VOTES);
+  break;
 }
 
   renderCars(filtered);
@@ -345,6 +353,35 @@ document.querySelectorAll("input[name='price'], #minPrice, #maxPrice")
 document.querySelectorAll("input[name='rap'], #minRap, #maxRap")
   .forEach(el => el.addEventListener("input", applyFilters));
 
+// Load ratings
+async function addCommunityVotes(cars){
+
+  const { data, error } = await supabase
+    .from("car_ratings")
+    .select("*");
+
+  if(error){
+    console.error(error);
+    return cars;
+  }
+
+  return cars.map(car => {
+
+    const rating = data.find(
+      r => r.car_name === car.CarName
+    );
+
+    return {
+      ...car,
+      LIKES: rating?.likes || 0,
+      DISLIKES: rating?.dislikes || 0,
+      VOTES: (rating?.likes || 0) + (rating?.dislikes || 0)
+    };
+
+  });
+
+}
+
 // ===== LOAD CARS =====
 async function loadCars() {
   try {
@@ -354,7 +391,9 @@ async function loadCars() {
 
     const api     = await res.json();
     const rawCars = api.data || {};
-    const newCars = Object.values(rawCars).map(normalizeCar).filter(Boolean);
+    let newCars = Object.values(rawCars).map(normalizeCar).filter(Boolean);
+
+newCars = await addCommunityVotes(newCars);
 
     if (!initialLoadDone) {
       carsData         = newCars;
@@ -476,5 +515,6 @@ async function vote(carName,type){
 
 
 // Initial load + poll every 5 seconds
+
 loadCars();
 setInterval(loadCars, 15000);
