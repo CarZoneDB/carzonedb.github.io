@@ -395,3 +395,50 @@
     0 0 0 1px rgba(224, 92, 110, 0.15),
     0 0 20px 3px rgba(224, 92, 110, 0.08);
 }
+/* ===== Car Rating Buttons ===== */
+
+.rating {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.rating button {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--background-color);
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 14px;
+  transition: 
+    transform 0.15s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.rating button:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-color);
+  background: var(--foreground-color);
+}
+
+.rating button:active {
+  transform: scale(0.95);
+}
+
+/* Like button */
+.rating button:first-child:hover {
+  border-color: #5ddb8f;
+}
+
+/* Dislike button */
+.rating button:last-child:hover {
+  border-color: #e05c6e;
+}
+
+.rating span {
+  font-weight: 700;
+  margin-left: 4px;
+}
