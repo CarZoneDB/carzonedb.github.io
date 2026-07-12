@@ -2,7 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const supabase = createClient(
   "https://kroqqjuhuilvzrfuuvvj.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtyb3FxanVodWlsvnpyZnV1dnZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM4NTg4NzksImV4cCI6MjA5OTQzNDg3OX0.pnPPwWVQuruW0CQ1ELwGyOtgNgP9VWmlLB40X-GHaG4"
+  "sb_publishable_JVDQ661zY3Dy-E9TtkQL_w_zX-rvqTm"
 );
 
 // ===== Dropdown =====
