@@ -95,18 +95,6 @@ function renderCars(data) {
     }
   </div>
 
-<div class="rating">
-
-<button onclick="vote('${car.CarName}', 'like')">
-👍 <span id="likes-${safeId}">0</span>
-</button>
-
-<button onclick="vote('${car.CarName}', 'dislike')">
-👎 <span id="dislikes-${safeId}">0</span>
-</button>
-
-</div>
-
   <div class="car-details">
     <div><strong>Type:</strong> ${car.TYPE || 'N/A'}</div>
     <div><strong>In Shop:</strong> ${car.SHOP ? 'Yes' : 'No'}</div>
@@ -123,6 +111,18 @@ function renderCars(data) {
     <div><strong>Acceleration:</strong> 0-60 in ${car.ACC || 'N/A'} sec</div>
     <div><strong>EXP for Driving:</strong> ${car.EXP || 'N/A'}</div>
   </div>
+
+<div class="rating">
+
+<button onclick="vote('${car.CarName}', 'like')">
+👍 <span id="likes-${safeId}">0</span>
+</button>
+
+<button onclick="vote('${car.CarName}', 'dislike')">
+👎 <span id="dislikes-${safeId}">0</span>
+</button>
+
+</div>
 
 </article>
         `;
