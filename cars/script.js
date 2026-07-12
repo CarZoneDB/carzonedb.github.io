@@ -386,75 +386,72 @@ async function loadCars() {
 
 // ===== VOTING SYSTEM =====
 async function vote(carName, type){
-  // Check localStorage first
   const alreadyVoted = localStorage.getItem("vote-" + carName);
   if(alreadyVoted){
     alert("You already voted for this car!");
     return;
   }
 
-  // Double click protection race-guard
   if(window.voting) return;
   window.voting = true;
 
   try {
-    const { data } = await supabase
+    const { data, error: selectError } = await supabase
       .from("car_ratings")
       .select("*")
       .eq("car_name", carName)
       .maybeSingle();
 
-if(!data){
-  const { error } = await supabase
-    .from("car_ratings")
-    .insert({
-      car_name: carName,
-      likes: type === "like" ? 1 : 0,
-      dislikes: type === "dislike" ? 1 : 0
-    });
+    if(selectError) throw selectError;
 
-  if(error) throw error;
+    if(!data){
+      const { error } = await supabase
+        .from("car_ratings")
+        .insert({
+          car_name: carName,
+          likes: type === "like" ? 1 : 0,
+          dislikes: type === "dislike" ? 1 : 0
+        });
 
-} else {
-  const { error } = await supabase
-    .from("car_ratings")
-    .update({
-      likes: type === "like" ? data.likes + 1 : data.likes,
-      dislikes: type === "dislike" ? data.dislikes + 1 : data.dislikes
-    })
-    .eq("car_name", carName);
+      if(error) throw error;
 
-  if(error) throw error;
-}q("car_name", carName);
+    } else {
+      const { error } = await supabase
+        .from("car_ratings")
+        .update({
+          likes: type === "like" ? data.likes + 1 : data.likes,
+          dislikes: type === "dislike" ? data.dislikes + 1 : data.dislikes
+        })
+        .eq("car_name", carName);
+
+      if(error) throw error;
     }
 
     localStorage.setItem("vote-" + carName, "true");
 
-    // Fix: Locate car and execute UI updates AFTER initializing it
     const car = carsData.find(c => c.CarName === carName);
-    if (car) {
-      if (type === "like") car.LIKES++;
-      if (type === "dislike") car.DISLIKES++;
+
+    if(car){
+      if(type === "like") car.LIKES++;
+      if(type === "dislike") car.DISLIKES++;
 
       car.VOTES = car.LIKES + car.DISLIKES;
       car.RATING = car.VOTES ? car.LIKES / car.VOTES : 0;
 
       const safeId = carName.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+
       const likesEl = document.getElementById(`likes-${safeId}`);
       const dislikesEl = document.getElementById(`dislikes-${safeId}`);
 
-      if (likesEl) likesEl.textContent = car.LIKES;
-      if (dislikesEl) dislikesEl.textContent = car.DISLIKES;
-
-      const sort = document.querySelector("input[name='sort']:checked")?.value;
-      if (sort === "ratings-high" || sort === "ratings-low") {
-        applyFilters();
-      }
+      if(likesEl) likesEl.textContent = car.LIKES;
+      if(dislikesEl) dislikesEl.textContent = car.DISLIKES;
     }
-  } catch (err) {
-    console.error("Voting error: ", err);
+
+  } catch(err) {
+    console.error("Voting error:", err);
+    alert("Vote failed: " + err.message);
+
   } finally {
-    // Release the protection latch
     window.voting = false;
   }
 }
