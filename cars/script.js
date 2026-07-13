@@ -459,6 +459,6 @@ async function vote(carName, type){
 
 window.vote = vote;
 
-// Initial load + poll every 15 seconds
+// Initial load + poll every 5 mins
 loadCars();
-setInterval(loadCars, 15000);
+setInterval(loadCars, 500000);
