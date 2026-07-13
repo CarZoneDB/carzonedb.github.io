@@ -59,7 +59,7 @@ function normalizeCar(car) {
     POWER: car.POWER || 0,
     EXP: car.EXP || 0,
     PRICE: car.PRICE || 0,
-    RAP: car.RAP || 0,
+    //RAP: car.RAP || 0,
     PACKNAME: car.PACKNAME || null,
     GAMEPASSID: car.GAMEPASSID || null,
 
@@ -72,6 +72,15 @@ function normalizeCar(car) {
 }
 
 // ===== RENDER =====
+    /* Old RAP display
+    <div class="rap-row">
+      <strong>RAP:</strong>
+      <span class="rap-value" id="rap-${safeId}">
+        ${car.RAP === 0 ? "N/A" : `$${Number(car.RAP).toLocaleString()}`}
+      </span>
+      <span class="rap-delta" id="rap-delta-${safeId}"></span>
+    </div>
+    */
 function renderCars(data) {
   carList.innerHTML = data.length
     ? data.map(car => {
@@ -104,13 +113,6 @@ function renderCars(data) {
     <div><strong>Type:</strong> ${car.TYPE || 'N/A'}</div>
     <div><strong>In Shop:</strong> ${car.SHOP ? 'Yes' : 'No'}</div>
     <div><strong>Price:</strong> $${Number(car.PRICE).toLocaleString()}</div>
-    <div class="rap-row">
-      <strong>RAP:</strong>
-      <span class="rap-value" id="rap-${safeId}">
-        ${car.RAP === 0 ? "N/A" : `$${Number(car.RAP).toLocaleString()}`}
-      </span>
-      <span class="rap-delta" id="rap-delta-${safeId}"></span>
-    </div>
     <div><strong>V-Max:</strong> ${car.VMAX || 'N/A'} MPH</div>
     <div><strong>Horse Power:</strong> ${car.POWER || 'N/A'} HP</div>
     <div><strong>Acceleration:</strong> 0-60 in ${car.ACC || 'N/A'} sec</div>
@@ -132,6 +134,7 @@ function renderCars(data) {
 }
 
 // ===== PATCH RAP (live update, no rerender) =====
+/* 
 function patchRap(newData) {
   newData.forEach(newCar => {
     const existing = carsData.find(c => c.CarName === newCar.CarName);
@@ -207,7 +210,7 @@ function patchRap(newData) {
 
     existing.RAP = newRap;
   });
-}
+}*/
 
 // ===== FILTER =====
 function applyFilters() {
@@ -238,9 +241,9 @@ function applyFilters() {
   const minPrice  = Number(document.getElementById("minPrice").value) || 0;
   const maxPrice  = Number(document.getElementById("maxPrice").value) || Infinity;
 
-  const rapMode = document.querySelector("input[name='rap']:checked").value;
+  /* const rapMode = document.querySelector("input[name='rap']:checked").value;
   const minRap  = Number(document.getElementById("minRap").value) || 0;
-  const maxRap  = Number(document.getElementById("maxRap").value) || Infinity;
+  const maxRap  = Number(document.getElementById("maxRap").value) || Infinity;*/
 
   let filtered = carsData.filter(car => {
     if (!car.CarName.toLowerCase().includes(search)) return false;
@@ -263,9 +266,9 @@ function applyFilters() {
       if (car.PRICE < minPrice || car.PRICE > maxPrice) return false;
     }
 
-    if (rapMode === "range") {
+    /* if (rapMode === "range") {
       if (car.RAP < minRap || car.RAP > maxRap) return false;
-    }
+    }*/
 
     return true;
   });
@@ -314,7 +317,7 @@ document.querySelectorAll(".filter-chip").forEach(chip => {
 });
 document.querySelectorAll("input[name='sort']").forEach(el => el.addEventListener("change", applyFilters));
 document.querySelectorAll("input[name='price'], #minPrice, #maxPrice").forEach(el => el.addEventListener("input", applyFilters));
-document.querySelectorAll("input[name='rap'], #minRap, #maxRap").forEach(el => el.addEventListener("input", applyFilters));
+//document.querySelectorAll("input[name='rap'], #minRap, #maxRap").forEach(el => el.addEventListener("input", applyFilters));
 
 // Batch Load ratings
 async function addCommunityVotes(cars){
