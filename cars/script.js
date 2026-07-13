@@ -59,7 +59,7 @@ function normalizeCar(car) {
     POWER: car.POWER || 0,
     EXP: car.EXP || 0,
     PRICE: car.PRICE || 0,
-    RAP: car.RAP || 0,
+    //RAP: car.RAP || 0,
     PACKNAME: car.PACKNAME || null,
     GAMEPASSID: car.GAMEPASSID || null,
 
@@ -362,7 +362,7 @@ async function loadCars() {
       console.log("Cars Loaded:", carsData.length);
       renderCars(carsData);
     } else {
-      patchRap(newCars);
+      //patchRap(newCars);
 
       newCars.forEach(newCar => {
         const oldCar = carsData.find(c => c.CarName === newCar.CarName);
