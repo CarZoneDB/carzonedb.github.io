@@ -441,31 +441,3 @@
   font-weight: 700;
   margin-left: 4px;
 }
-
-
-/* favorite star */
-.car{
-    position:relative;
-}
-
-.favorite-star{
-    position:absolute;
-    top:14px;
-    right:14px;
-
-    font-size:26px;
-    color:#777;
-    cursor:pointer;
-    user-select:none;
-
-    transition:.2s;
-}
-
-.favorite-star:hover{
-    transform:scale(1.2);
-}
-
-.favorite-star.active{
-    color:#FFD700;
-    text-shadow:0 0 10px rgba(255,215,0,.6);
-}
