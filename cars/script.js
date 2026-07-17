@@ -84,11 +84,6 @@ function renderCars(data) {
 
         return `
 <article class="car" id="car-${safeId}" tabindex="0">
-<div class="favorite-star ${isFavorite(car.CarName) ? "active" : ""}"
-     onclick="toggleFavorite('${car.CarName.replace(/'/g, "\\'")}')">
-    ★
-</div>
-
   <h2>${car.CarName}</h2>
 
   <div class="badges">
@@ -215,31 +210,6 @@ function patchRap(newData) {
   });
 }*/
 
-// Favorited
-function getFavorites() {
-  return JSON.parse(localStorage.getItem("favoriteCars") || "[]");
-}
-
-function isFavorite(name) {
-  return getFavorites().includes(name);
-}
-
-function toggleFavorite(name) {
-  let favs = getFavorites();
-
-  if (favs.includes(name)) {
-    favs = favs.filter(c => c !== name);
-  } else {
-    favs.push(name);
-  }
-
-  localStorage.setItem("favoriteCars", JSON.stringify(favs));
-
-  applyFilters();
-}
-
-window.toggleFavorite = toggleFavorite;
-
 // ===== FILTER =====
 function applyFilters() {
   const search = document
@@ -269,11 +239,6 @@ function applyFilters() {
   const minPrice  = Number(document.getElementById("minPrice").value) || 0;
   const maxPrice  = Number(document.getElementById("maxPrice").value) || Infinity;
 
-const favoriteMode =
-    document.querySelector("input[name='favorites']:checked").value;
-
-const favorites = getFavorites();
-  
   /*const rapMode = document.querySelector("input[name='rap']:checked").value;
   const minRap  = Number(document.getElementById("minRap").value) || 0;
   const maxRap  = Number(document.getElementById("maxRap").value) || Infinity;*/
@@ -299,14 +264,6 @@ const favorites = getFavorites();
       if (car.PRICE < minPrice || car.PRICE > maxPrice) return false;
     }
 
-const fav = favorites.includes(car.CarName);
-
-if (favoriteMode === "favorites" && !fav)
-    return false;
-
-if (favoriteMode === "unfavorites" && fav)
-    return false;
-    
     /*if (rapMode === "range") {
       if (car.RAP < minRap || car.RAP > maxRap) return false;
     }*/
@@ -344,17 +301,6 @@ if (favoriteMode === "unfavorites" && fav)
       break;
   }
 
-const favoritesSet = new Set(getFavorites());
-
-filtered.sort((a, b) => {
-    const af = favoritesSet.has(a.CarName);
-    const bf = favoritesSet.has(b.CarName);
-
-    if (af === bf) return 0;
-
-    return af ? -1 : 1;
-});
-  
   renderCars(filtered);
 }
 
@@ -369,9 +315,6 @@ document.querySelectorAll(".filter-chip").forEach(chip => {
 });
 document.querySelectorAll("input[name='sort']").forEach(el => el.addEventListener("change", applyFilters));
 document.querySelectorAll("input[name='price'], #minPrice, #maxPrice").forEach(el => el.addEventListener("input", applyFilters));
-document
-  .querySelectorAll("input[name='favorites']")
-  .forEach(el => el.addEventListener("change", applyFilters));
 //document.querySelectorAll("input[name='rap'], #minRap, #maxRap").forEach(el => el.addEventListener("input", applyFilters));
 
 // Batch Load ratings
