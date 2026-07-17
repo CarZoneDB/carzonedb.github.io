@@ -24,30 +24,6 @@
 
     <input type="text" placeholder="Search cars..." class="filter-input">
 
-    <!-- Type -->
-    <div class="filter-dropdown">
-      <button class="filter-btn" onclick="toggleDropdown(this)">All Types ▾</button>
-      <div class="dropdown-menu">
-        <div class="dropdown-header">Type</div>
-        <label class="checkbox"><input type="checkbox" value="hyper">Hyper Car</label>
-        <label class="checkbox"><input type="checkbox" value="limited">Limited</label>
-        <label class="checkbox"><input type="checkbox" value="suv">SUV</label>
-        <label class="checkbox"><input type="checkbox" value="sport">Sport</label>
-        <label class="checkbox"><input type="checkbox" value="street">Street</label>
-        <label class="checkbox"><input type="checkbox" value="super">Super Car</label>
-      </div>
-    </div>
-
-    <!-- Shop Status -->
-    <div class="filter-dropdown">
-      <button class="filter-btn" onclick="toggleDropdown(this)">All Shop Status ▾</button>
-      <div class="dropdown-menu">
-        <div class="dropdown-header">Shop Status</div>
-        <label class="checkbox"><input type="checkbox" value="available">In Shop</label>
-        <label class="checkbox"><input type="checkbox" value="unavailable">Not in Shop</label>
-      </div>
-    </div>
-
 <!-- Sort -->
 <div class="filter-dropdown">
   <button class="filter-btn" onclick="toggleDropdown(this)">Sort By ▾</button>
@@ -73,10 +49,29 @@
   </div>
 </div>
     
-    <!-- Chips -->
-    <button class="filter-chip">Body Kits</button>
-    <button class="filter-chip">New Cars</button>
-    <button class="filter-chip">Gamepass Cars</button>
+    <!-- Type -->
+    <div class="filter-dropdown">
+      <button class="filter-btn" onclick="toggleDropdown(this)">All Types ▾</button>
+      <div class="dropdown-menu">
+        <div class="dropdown-header">Type</div>
+        <label class="checkbox"><input type="checkbox" value="hyper">Hyper Car</label>
+        <label class="checkbox"><input type="checkbox" value="limited">Limited</label>
+        <label class="checkbox"><input type="checkbox" value="suv">SUV</label>
+        <label class="checkbox"><input type="checkbox" value="sport">Sport</label>
+        <label class="checkbox"><input type="checkbox" value="street">Street</label>
+        <label class="checkbox"><input type="checkbox" value="super">Super Car</label>
+      </div>
+    </div>
+
+    <!-- Shop Status -->
+    <div class="filter-dropdown">
+      <button class="filter-btn" onclick="toggleDropdown(this)">All Shop Status ▾</button>
+      <div class="dropdown-menu">
+        <div class="dropdown-header">Shop Status</div>
+        <label class="checkbox"><input type="checkbox" value="available">In Shop</label>
+        <label class="checkbox"><input type="checkbox" value="unavailable">Not in Shop</label>
+      </div>
+    </div>
 
     <!-- Price -->
     <div class="filter-dropdown">
@@ -107,9 +102,37 @@
     <input type="number" id="maxPrice" placeholder="Max">
   </div>
 </label>
+    
+    <!-- Chips -->
+    <button class="filter-chip">New Cars</button>
+    <button class="filter-chip">Body Kits</button>
+    <button class="filter-chip">Gamepass Cars</button>
 
       </div>
     </div>
+
+    <!-- Favorites -->
+<div class="filter-dropdown">
+  <button class="filter-btn" onclick="toggleDropdown(this)">Favorites ▾</button>
+  <div class="dropdown-menu">
+    <div class="dropdown-header">Favorites</div>
+
+    <label class="radio">
+      <input type="radio" name="favorites" value="all" checked>
+      All Cars
+    </label>
+
+    <label class="radio">
+      <input type="radio" name="favorites" value="favorites">
+      Favorites Only
+    </label>
+
+    <label class="radio">
+      <input type="radio" name="favorites" value="unfavorites">
+      Unfavorited Only
+    </label>
+  </div>
+</div>
 
 <!-- RAP -->
     
