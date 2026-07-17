@@ -84,6 +84,11 @@ function renderCars(data) {
 
         return `
 <article class="car" id="car-${safeId}" tabindex="0">
+<div class="favorite-star ${isFavorite(car.CarName) ? "active" : ""}"
+     onclick="toggleFavorite('${car.CarName.replace(/'/g, "\\'")}')">
+    ★
+</div>
+
   <h2>${car.CarName}</h2>
 
   <div class="badges">
@@ -209,6 +214,31 @@ function patchRap(newData) {
     existing.RAP = newRap;
   });
 }*/
+
+// Favorited
+function getFavorites() {
+  return JSON.parse(localStorage.getItem("favoriteCars") || "[]");
+}
+
+function isFavorite(name) {
+  return getFavorites().includes(name);
+}
+
+function toggleFavorite(name) {
+  let favs = getFavorites();
+
+  if (favs.includes(name)) {
+    favs = favs.filter(c => c !== name);
+  } else {
+    favs.push(name);
+  }
+
+  localStorage.setItem("favoriteCars", JSON.stringify(favs));
+
+  applyFilters();
+}
+
+window.toggleFavorite = toggleFavorite;
 
 // ===== FILTER =====
 function applyFilters() {
